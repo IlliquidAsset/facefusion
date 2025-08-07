@@ -16,14 +16,31 @@ def main():
         "--skip-conda"
     ], check=True)
     
-    # 2.5) Install basic training dependencies (lightweight ones)
+    # 2.5) Install training dependencies for Spaces
     try:
+        # Install PyTorch CPU version (lighter for Spaces)
         subprocess.run([
             sys.executable, "-m", "pip", "install",
-            "--no-cache-dir", "matplotlib", "numpy", "pillow"
-        ], check=False)  # Don't fail if these don't install
-    except Exception:
-        print("Warning: Some training dependencies could not be installed")
+            "--no-cache-dir", 
+            "torch==2.1.0+cpu", 
+            "torchvision==0.16.0+cpu", 
+            "-f", "https://download.pytorch.org/whl/torch_stable.html"
+        ], check=False)
+        
+        # Install other training dependencies
+        subprocess.run([
+            sys.executable, "-m", "pip", "install",
+            "--no-cache-dir", 
+            "transformers>=4.30.0",
+            "diffusers>=0.20.0", 
+            "huggingface_hub>=0.16.4",
+            "matplotlib>=3.7.0",
+            "accelerate>=0.20.3"
+        ], check=False)
+        
+        print("✅ Training dependencies installed successfully")
+    except Exception as e:
+        print(f"⚠️ Warning: Some training dependencies could not be installed: {e}")
 
     # 3) Launch the full FaceFusion UI with training tab on your GPU
     subprocess.run([

@@ -1,41 +1,18 @@
-import random
 from typing import Optional
 
 import gradio
 
-from facefusion import metadata, wording
+from facefusion import metadata
 
-METADATA_BUTTON : Optional[gradio.Button] = None
-ACTION_BUTTON : Optional[gradio.Button] = None
+# Removed the buttons that were taking up space
 
 
 def render() -> None:
-	global METADATA_BUTTON
-	global ACTION_BUTTON
-
-	action = random.choice(
-	[
-		{
-			'wording': wording.get('about.become_a_member'),
-			'url': 'https://subscribe.facefusion.io'
-		},
-		{
-			'wording': wording.get('about.join_our_community'),
-			'url': 'https://join.facefusion.io'
-		},
-		{
-			'wording': wording.get('about.read_the_documentation'),
-			'url': 'https://docs.facefusion.io'
-		}
-	])
-
-	METADATA_BUTTON = gradio.Button(
-		value = metadata.get('name') + ' ' + metadata.get('version'),
-		variant = 'primary',
-		link = metadata.get('url')
-	)
-	ACTION_BUTTON = gradio.Button(
-		value = action.get('wording'),
-		link = action.get('url'),
-		size = 'sm'
-	)
+	# Just show the title without buttons
+	with gradio.Row():
+		gradio.HTML(f"""
+		<div style="text-align: center; padding: 10px;">
+			<h2 style="margin: 0; color: #1f2937;">{metadata.get('name')} {metadata.get('version')} - Training Edition</h2>
+			<p style="margin: 5px 0; color: #6b7280; font-size: 0.9em;">{metadata.get('description')}</p>
+		</div>
+		""")

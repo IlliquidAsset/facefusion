@@ -9,25 +9,32 @@ def pre_check() -> bool:
 
 def render() -> gradio.Blocks:
 	with gradio.Blocks() as layout:
+		# Header
+		about.render()
+		
 		with gradio.Row():
 			with gradio.Column(scale = 4):
-				with gradio.Blocks():
-					about.render()
-				with gradio.Blocks():
+				with gradio.Accordion("🎯 Training Options", open=True):
 					training_options.render()
-				with gradio.Blocks():
+				
+				with gradio.Accordion("💾 Memory", open=False):
 					memory.render()
-				with gradio.Blocks():
+					
+				with gradio.Accordion("⚙️ Common Options", open=False):
 					common_options.render()
+					
 			with gradio.Column(scale = 4):
-				with gradio.Blocks():
+				with gradio.Accordion("📊 Dataset Manager", open=True):
 					dataset_manager.render()
-				with gradio.Blocks():
+					
+				with gradio.Accordion("🤖 Model Trainer", open=True):
 					model_trainer.render()
-				with gradio.Blocks():
+					
+				with gradio.Accordion("💻 Terminal", open=False):
 					terminal.render()
+					
 			with gradio.Column(scale = 7):
-				with gradio.Blocks():
+				with gradio.Accordion("📈 Training Progress", open=True):
 					training_progress.render()
 	return layout
 
@@ -40,4 +47,5 @@ def listen() -> None:
 	common_options.listen()
 
 def run(ui : gradio.Blocks) -> None:
-	ui.launch(favicon_path = 'facefusion.ico', inbrowser = state_manager.get_item('open_browser'))
+	# This function is called by the core but doesn't need to launch - that's handled centrally
+	pass

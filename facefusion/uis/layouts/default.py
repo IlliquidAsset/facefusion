@@ -10,72 +10,100 @@ def pre_check() -> bool:
 
 def render() -> gradio.Blocks:
 	with gradio.Blocks() as layout:
+		# Header
+		about.render()
+		
 		with gradio.Row():
 			with gradio.Column(scale = 4):
-				with gradio.Blocks():
-					about.render()
-				with gradio.Blocks():
+				with gradio.Accordion("🎛️ Processors", open=True):
 					processors.render()
-				with gradio.Blocks():
+				
+				with gradio.Accordion("👤 Age Modifier", open=False):
 					age_modifier_options.render()
-				with gradio.Blocks():
+					
+				with gradio.Accordion("🔄 Deep Swapper", open=False):
 					deep_swapper_options.render()
-				with gradio.Blocks():
+					
+				with gradio.Accordion("😊 Expression Restorer", open=False):
 					expression_restorer_options.render()
-				with gradio.Blocks():
+					
+				with gradio.Accordion("🐛 Face Debugger", open=False):
 					face_debugger_options.render()
-				with gradio.Blocks():
+					
+				with gradio.Accordion("✏️ Face Editor", open=False):
 					face_editor_options.render()
-				with gradio.Blocks():
+					
+				with gradio.Accordion("✨ Face Enhancer", open=False):
 					face_enhancer_options.render()
-				with gradio.Blocks():
+					
+				with gradio.Accordion("🔀 Face Swapper", open=True):
 					face_swapper_options.render()
-				with gradio.Blocks():
+					
+				with gradio.Accordion("🎨 Frame Colorizer", open=False):
 					frame_colorizer_options.render()
-				with gradio.Blocks():
+					
+				with gradio.Accordion("📈 Frame Enhancer", open=False):
 					frame_enhancer_options.render()
-				with gradio.Blocks():
+					
+				with gradio.Accordion("👄 Lip Syncer", open=False):
 					lip_syncer_options.render()
-				with gradio.Blocks():
+					
+				with gradio.Accordion("⚡ Execution", open=False):
 					execution.render()
 					execution_thread_count.render()
 					execution_queue_count.render()
-				with gradio.Blocks():
+					
+				with gradio.Accordion("📥 Download", open=False):
 					download.render()
-				with gradio.Blocks():
+					
+				with gradio.Accordion("💾 Memory", open=False):
 					memory.render()
-				with gradio.Blocks():
+					
+				with gradio.Accordion("🗂️ Temp Frame", open=False):
 					temp_frame.render()
-				with gradio.Blocks():
+					
+				with gradio.Accordion("📤 Output Options", open=False):
 					output_options.render()
+					
 			with gradio.Column(scale = 4):
-				with gradio.Blocks():
+				with gradio.Accordion("📁 Source", open=True):
 					source.render()
-				with gradio.Blocks():
+					
+				with gradio.Accordion("🎯 Target", open=True):
 					target.render()
-				with gradio.Blocks():
+					
+				with gradio.Accordion("💾 Output", open=True):
 					output.render()
-				with gradio.Blocks():
+					
+				with gradio.Accordion("💻 Terminal", open=False):
 					terminal.render()
-				with gradio.Blocks():
+					
+				with gradio.Accordion("🔄 Workflow", open=True):
 					ui_workflow.render()
 					instant_runner.render()
 					job_runner.render()
 					job_manager.render()
+					
 			with gradio.Column(scale = 7):
-				with gradio.Blocks():
+				with gradio.Accordion("👁️ Preview", open=True):
 					preview.render()
-				with gradio.Blocks():
+					
+				with gradio.Accordion("✂️ Trim Frame", open=False):
 					trim_frame.render()
-				with gradio.Blocks():
+					
+				with gradio.Accordion("👤 Face Selector", open=False):
 					face_selector.render()
-				with gradio.Blocks():
+					
+				with gradio.Accordion("🎭 Face Masker", open=False):
 					face_masker.render()
-				with gradio.Blocks():
+					
+				with gradio.Accordion("🔍 Face Detector", open=False):
 					face_detector.render()
-				with gradio.Blocks():
+					
+				with gradio.Accordion("📍 Face Landmarker", open=False):
 					face_landmarker.render()
-				with gradio.Blocks():
+					
+				with gradio.Accordion("⚙️ Common Options", open=False):
 					common_options.render()
 	return layout
 
