@@ -1,3 +1,16 @@
+metadata
+
+title: Facefusion3.0.0.1
+emoji: 💻
+colorFrom: green
+colorTo: red
+sdk: gradio
+sdk_version: 5.4.0
+app_file: app.py
+pinned: false
+license: mit
+short_description: faceswao
+
 FaceFusion
 ==========
 
