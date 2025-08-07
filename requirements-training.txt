@@ -1,0 +1,15 @@
+# Training dependencies for FaceFusion
+torch>=2.0.0
+torchvision>=0.15.0
+transformers>=4.30.0
+diffusers>=0.20.0
+huggingface_hub>=0.16.4
+accelerate>=0.20.3
+xformers>=0.0.20
+matplotlib>=3.7.0
+insightface>=0.7.3
+onnxruntime>=1.15.1
+opencv-python>=4.8.0
+scikit-image>=0.20.0
+tqdm>=4.65.0
+wandb>=0.15.0  # Optional: for experiment tracking

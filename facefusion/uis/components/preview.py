@@ -40,34 +40,41 @@ def render() -> None:
 		'maximum': 100,
 		'visible': False
 	}
-	conditional_append_reference_faces()
-	reference_faces = get_reference_faces() if 'reference' in state_manager.get_item('face_selector_mode') else None
-	source_frames = read_static_images(state_manager.get_item('source_paths'))
-	source_faces = get_many_faces(source_frames)
-	source_face = get_average_face(source_faces)
-	source_audio_path = get_first(filter_audio_paths(state_manager.get_item('source_paths')))
-	source_audio_frame = create_empty_audio_frame()
+	try:
+		conditional_append_reference_faces()
+		reference_faces = get_reference_faces() if 'reference' in state_manager.get_item('face_selector_mode') else None
+		source_frames = read_static_images(state_manager.get_item('source_paths'))
+		source_faces = get_many_faces(source_frames)
+		source_face = get_average_face(source_faces)
+		source_audio_path = get_first(filter_audio_paths(state_manager.get_item('source_paths')))
+		source_audio_frame = create_empty_audio_frame()
 
-	if source_audio_path and state_manager.get_item('output_video_fps') and state_manager.get_item('reference_frame_number'):
-		temp_audio_frame = get_audio_frame(source_audio_path, state_manager.get_item('output_video_fps'), state_manager.get_item('reference_frame_number'))
-		if numpy.any(temp_audio_frame):
-			source_audio_frame = temp_audio_frame
+		if source_audio_path and state_manager.get_item('output_video_fps') and state_manager.get_item('reference_frame_number'):
+			temp_audio_frame = get_audio_frame(source_audio_path, state_manager.get_item('output_video_fps'), state_manager.get_item('reference_frame_number'))
+			if numpy.any(temp_audio_frame):
+				source_audio_frame = temp_audio_frame
 
-	if is_image(state_manager.get_item('target_path')):
-		target_vision_frame = read_static_image(state_manager.get_item('target_path'))
-		preview_vision_frame = process_preview_frame(reference_faces, source_face, source_audio_frame, target_vision_frame)
-		preview_image_options['value'] = normalize_frame_color(preview_vision_frame)
-		preview_image_options['elem_classes'] = [ 'image-preview', 'is-' + detect_frame_orientation(preview_vision_frame) ]
+		if is_image(state_manager.get_item('target_path')):
+			target_vision_frame = read_static_image(state_manager.get_item('target_path'))
+			preview_vision_frame = process_preview_frame(reference_faces, source_face, source_audio_frame, target_vision_frame)
+			preview_image_options['value'] = normalize_frame_color(preview_vision_frame)
+			preview_image_options['elem_classes'] = [ 'image-preview', 'is-' + detect_frame_orientation(preview_vision_frame) ]
 
-	if is_video(state_manager.get_item('target_path')):
-		temp_vision_frame = read_video_frame(state_manager.get_item('target_path'), state_manager.get_item('reference_frame_number'))
-		preview_vision_frame = process_preview_frame(reference_faces, source_face, source_audio_frame, temp_vision_frame)
-		preview_image_options['value'] = normalize_frame_color(preview_vision_frame)
-		preview_image_options['elem_classes'] = [ 'image-preview', 'is-' + detect_frame_orientation(preview_vision_frame) ]
-		preview_image_options['visible'] = True
-		preview_frame_slider_options['value'] = state_manager.get_item('reference_frame_number')
-		preview_frame_slider_options['maximum'] = count_video_frame_total(state_manager.get_item('target_path'))
-		preview_frame_slider_options['visible'] = True
+		if is_video(state_manager.get_item('target_path')):
+			temp_vision_frame = read_video_frame(state_manager.get_item('target_path'), state_manager.get_item('reference_frame_number'))
+			preview_vision_frame = process_preview_frame(reference_faces, source_face, source_audio_frame, temp_vision_frame)
+			preview_image_options['value'] = normalize_frame_color(preview_vision_frame)
+			preview_image_options['elem_classes'] = [ 'image-preview', 'is-' + detect_frame_orientation(preview_vision_frame) ]
+			preview_image_options['visible'] = True
+			preview_frame_slider_options['value'] = state_manager.get_item('reference_frame_number')
+			preview_frame_slider_options['maximum'] = count_video_frame_total(state_manager.get_item('target_path'))
+			preview_frame_slider_options['visible'] = True
+	except AttributeError as error:
+		if "'NoneType' object has no attribute 'run'" in str(error):
+			logger.error('Face detector model not loaded. Please ensure all required models are downloaded.')
+	except Exception as error:
+		logger.error(f'Preview render failed: {error}')
+	
 	PREVIEW_IMAGE = gradio.Image(**preview_image_options)
 	PREVIEW_FRAME_SLIDER = gradio.Slider(**preview_frame_slider_options)
 	register_ui_component('preview_frame_slider', PREVIEW_FRAME_SLIDER)
@@ -179,9 +186,13 @@ def listen() -> None:
 
 
 def clear_and_update_preview_image(frame_number : int = 0) -> gradio.Image:
-	clear_reference_faces()
-	clear_static_faces()
-	return update_preview_image(frame_number)
+	try:
+		clear_reference_faces()
+		clear_static_faces()
+		return update_preview_image(frame_number)
+	except Exception as error:
+		logger.error(f'Clear and update preview failed: {error}')
+		return gradio.Image(value = None, elem_classes = None)
 
 
 def slide_preview_image(frame_number : int = 0) -> gradio.Image:
@@ -195,39 +206,48 @@ def slide_preview_image(frame_number : int = 0) -> gradio.Image:
 def update_preview_image(frame_number : int = 0) -> gradio.Image:
 	while process_manager.is_checking():
 		sleep(0.5)
-	conditional_append_reference_faces()
-	reference_faces = get_reference_faces() if 'reference' in state_manager.get_item('face_selector_mode') else None
-	source_frames = read_static_images(state_manager.get_item('source_paths'))
-	source_faces = []
+	try:
+		conditional_append_reference_faces()
+		reference_faces = get_reference_faces() if 'reference' in state_manager.get_item('face_selector_mode') else None
+		source_frames = read_static_images(state_manager.get_item('source_paths'))
+		source_faces = []
 
-	for source_frame in source_frames:
-		temp_faces = get_many_faces([ source_frame ])
-		temp_faces = sort_faces_by_order(temp_faces, 'large-small')
-		if temp_faces:
-			source_faces.append(get_first(temp_faces))
-	source_face = get_average_face(source_faces)
-	source_audio_path = get_first(filter_audio_paths(state_manager.get_item('source_paths')))
-	source_audio_frame = create_empty_audio_frame()
+		for source_frame in source_frames:
+			temp_faces = get_many_faces([ source_frame ])
+			temp_faces = sort_faces_by_order(temp_faces, 'large-small')
+			if temp_faces:
+				source_faces.append(get_first(temp_faces))
+		source_face = get_average_face(source_faces)
+		source_audio_path = get_first(filter_audio_paths(state_manager.get_item('source_paths')))
+		source_audio_frame = create_empty_audio_frame()
 
-	if source_audio_path and state_manager.get_item('output_video_fps') and state_manager.get_item('reference_frame_number'):
-		reference_audio_frame_number = state_manager.get_item('reference_frame_number')
-		if state_manager.get_item('trim_frame_start'):
-			reference_audio_frame_number -= state_manager.get_item('trim_frame_start')
-		temp_audio_frame = get_audio_frame(source_audio_path, state_manager.get_item('output_video_fps'), reference_audio_frame_number)
-		if numpy.any(temp_audio_frame):
-			source_audio_frame = temp_audio_frame
+		if source_audio_path and state_manager.get_item('output_video_fps') and state_manager.get_item('reference_frame_number'):
+			reference_audio_frame_number = state_manager.get_item('reference_frame_number')
+			if state_manager.get_item('trim_frame_start'):
+				reference_audio_frame_number -= state_manager.get_item('trim_frame_start')
+			temp_audio_frame = get_audio_frame(source_audio_path, state_manager.get_item('output_video_fps'), reference_audio_frame_number)
+			if numpy.any(temp_audio_frame):
+				source_audio_frame = temp_audio_frame
 
-	if is_image(state_manager.get_item('target_path')):
-		target_vision_frame = read_static_image(state_manager.get_item('target_path'))
-		preview_vision_frame = process_preview_frame(reference_faces, source_face, source_audio_frame, target_vision_frame)
-		preview_vision_frame = normalize_frame_color(preview_vision_frame)
-		return gradio.Image(value = preview_vision_frame, elem_classes = [ 'image-preview', 'is-' + detect_frame_orientation(preview_vision_frame) ])
+		if is_image(state_manager.get_item('target_path')):
+			target_vision_frame = read_static_image(state_manager.get_item('target_path'))
+			preview_vision_frame = process_preview_frame(reference_faces, source_face, source_audio_frame, target_vision_frame)
+			preview_vision_frame = normalize_frame_color(preview_vision_frame)
+			return gradio.Image(value = preview_vision_frame, elem_classes = [ 'image-preview', 'is-' + detect_frame_orientation(preview_vision_frame) ])
 
-	if is_video(state_manager.get_item('target_path')):
-		temp_vision_frame = read_video_frame(state_manager.get_item('target_path'), frame_number)
-		preview_vision_frame = process_preview_frame(reference_faces, source_face, source_audio_frame, temp_vision_frame)
-		preview_vision_frame = normalize_frame_color(preview_vision_frame)
-		return gradio.Image(value = preview_vision_frame, elem_classes = [ 'image-preview', 'is-' + detect_frame_orientation(preview_vision_frame) ])
+		if is_video(state_manager.get_item('target_path')):
+			temp_vision_frame = read_video_frame(state_manager.get_item('target_path'), frame_number)
+			preview_vision_frame = process_preview_frame(reference_faces, source_face, source_audio_frame, temp_vision_frame)
+			preview_vision_frame = normalize_frame_color(preview_vision_frame)
+			return gradio.Image(value = preview_vision_frame, elem_classes = [ 'image-preview', 'is-' + detect_frame_orientation(preview_vision_frame) ])
+	except AttributeError as error:
+		if "'NoneType' object has no attribute 'run'" in str(error):
+			logger.error('Face detector model not loaded. Please ensure all required models are downloaded.')
+			return gradio.Image(value = None, elem_classes = None)
+		raise error
+	except Exception as error:
+		logger.error(f'Preview generation failed: {error}')
+		return gradio.Image(value = None, elem_classes = None)
 	return gradio.Image(value = None, elem_classes = None)
 
 
