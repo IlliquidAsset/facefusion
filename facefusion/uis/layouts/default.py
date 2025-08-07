@@ -10,6 +10,7 @@ def pre_check() -> bool:
 
 def render() -> gradio.Blocks:
 	with gradio.Blocks() as layout:
+<<<<<<< HEAD
 		# Header
 		about.render()
 		
@@ -78,6 +79,55 @@ def render() -> gradio.Blocks:
 				with gradio.Accordion("💻 Terminal", open=False):
 					terminal.render()
 					
+				with gradio.Accordion("🔄 Workflow", open=True):
+=======
+		with gradio.Row():
+			with gradio.Column(scale = 4):
+				with gradio.Blocks():
+					about.render()
+				with gradio.Blocks():
+					processors.render()
+				with gradio.Blocks():
+					age_modifier_options.render()
+				with gradio.Blocks():
+					deep_swapper_options.render()
+				with gradio.Blocks():
+					expression_restorer_options.render()
+				with gradio.Blocks():
+					face_debugger_options.render()
+				with gradio.Blocks():
+					face_editor_options.render()
+				with gradio.Blocks():
+					face_enhancer_options.render()
+				with gradio.Blocks():
+					face_swapper_options.render()
+				with gradio.Blocks():
+					frame_colorizer_options.render()
+				with gradio.Blocks():
+					frame_enhancer_options.render()
+				with gradio.Blocks():
+					lip_syncer_options.render()
+				with gradio.Blocks():
+					execution.render()
+					execution_thread_count.render()
+					execution_queue_count.render()
+				with gradio.Blocks():
+					download.render()
+				with gradio.Blocks():
+					memory.render()
+				with gradio.Blocks():
+					temp_frame.render()
+				with gradio.Blocks():
+					output_options.render()
+			with gradio.Column(scale = 4):
+				with gradio.Blocks():
+					source.render()
+				with gradio.Blocks():
+					target.render()
+				with gradio.Blocks():
+					output.render()
+				with gradio.Blocks():
+					terminal.render()
 				with gradio.Accordion("🔄 Workflow", open=True):
 					ui_workflow.render()
 					instant_runner.render()
