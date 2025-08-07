@@ -18,6 +18,13 @@ def main():
     
     # 2.5) Install training dependencies for Spaces
     try:
+        # Fix NumPy compatibility first
+        subprocess.run([
+            sys.executable, "-m", "pip", "install",
+            "--no-cache-dir", 
+            "numpy<2.0"
+        ], check=False)
+        
         # Install PyTorch CPU version (lighter for Spaces)
         subprocess.run([
             sys.executable, "-m", "pip", "install",
