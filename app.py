@@ -19,11 +19,11 @@ def main():
     # Skip training dependencies to avoid conflicts
     print("⚠️ Training functionality disabled to ensure stability")
 
-    # 3) Launch the full FaceFusion UI with training tab on your GPU
+    # 3) Launch FaceFusion with streamlined UI optimized for user experience
     subprocess.run([
         sys.executable, "facefusion.py", "run",
-        "--execution-providers", "cuda",
-        "--ui-layouts", "default"
+        "--execution-providers", "cuda", "cpu",
+        "--ui-layouts", "streamlined"
     ], check=True)
 
 if __name__ == "__main__":
