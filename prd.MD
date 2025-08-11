@@ -250,6 +250,70 @@ git add -A && git commit -m "feat: modernized UI with streamlined workflow" && g
 git add -A && git commit -m "feat: complete training system with model management" && git push origin main
 ```
 
+### ✅ Phase 4: Multi-Source Upload & Quick Identity Profiles
+
+**Goal:** Make multi-image (or video) sources more consistent by creating a lightweight identity profile before swapping.
+
+#### Behavior
+* **Auto-detect mode**
+  * **1 image** → Direct Swap
+  * **≥2 images** → Create **Quick Identity Profile**, then Swap
+  * **Source video** → Sample **1 fps**, cap **60 frames**, keep **top-20 by quality** → Quick Identity Profile → Swap
+* **Advanced override:** toggle to force **Direct Swap** or **Create Profile**
+
+#### Quick Identity Profile (no heavy training)
+* **Pipeline:** face detect → quality filter → ArcFace embed → outlier prune → **centroid aggregate**
+* **Artifacts:** `models/identities/<slug>/profile.json` (mean embedding, covariance/dispersion, stats, thumbnail, created_at, source list)
+  If not saved, the profile is **ephemeral** and tied to the current job
+* **Use sites:**
+  * **Face selection:** improve matching of the correct target face
+  * **Swapper hints:** pass identity embedding/context where supported (non-breaking; swapper remains the same)
+
+#### Quality Rules (defaults)
+* **Min face size:** 256×256 in the crop
+* **Pose:** |yaw|,|pitch| ≤ 30°
+* **Blur threshold:** variance-of-Laplacian ≥ t_blur
+* **Consistency:** cluster all embeddings; keep **largest cluster**, drop outliers with cosine distance > **0.35** from interim centroid
+
+#### Settings (new `facefusion.ini` group)
+```ini
+[identity_profile]
+min_images = 2
+video_sample_fps = 1
+video_max_frames = 60
+max_images = 20
+min_face_px = 256
+pose_yaw_max = 30
+pose_pitch_max = 30
+blur_var_min = 100.0          ; tune empirically
+outlier_cosine_thresh = 0.35
+save_profiles_by_default = false
+retention_days = 30
+```
+
+#### UI/UX
+* **Sources tab**
+  * Drag-drop multiple images or a video
+  * Inline banner: "Building identity profile from N media…" with stepwise progress + ETA
+  * Chip displays active mode: **Direct Swap** or **Profile (N)**; clickable to toggle
+* **Training → Identities**
+  * Table: name, created_at, items, last_used, size; actions: **Use**, **Rename**, **Export**, **Delete**
+  * Detail drawer: thumbnail grid, quality stats, re-index button
+* **Jobs integration**
+  * Profile creation is its **own job**; the swap job depends on its completion
+  * Logs show per-step timings and counts (detected, kept, dropped)
+
+#### Performance Targets
+* **GPU:** profile build ≤ **8s** for 10 images; **CPU:** ≤ **30s** (reference machine)
+* **Memory:** keep embeddings in RAM; write artifact only if persisted
+
+#### Acceptance Criteria
+* Uploading multiple images or source video **automatically** creates Quick Identity Profile unless user disables it
+* Profiles improve face selection stability on targets with multiple faces (fewer wrong-face swaps)
+* Ephemeral vs. persisted behavior works as specified; persisted profiles appear in Identities registry
+* Quality filter and outlier pruning visible in logs and reflected in kept/dropped counts
+* Config keys above are honored; Effective Config view shows resolved values
+
 ### ✅ Phase 5: Production Ready (Push after completion)
 ```bash
 # 5.1 Performance & Reliability
