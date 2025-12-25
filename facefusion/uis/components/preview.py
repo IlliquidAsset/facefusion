@@ -74,7 +74,6 @@ def render() -> None:
 			logger.error('Face detector model not loaded. Please ensure all required models are downloaded.')
 	except Exception as error:
 		logger.error(f'Preview render failed: {error}')
-	
 	PREVIEW_IMAGE = gradio.Image(**preview_image_options)
 	PREVIEW_FRAME_SLIDER = gradio.Slider(**preview_frame_slider_options)
 	register_ui_component('preview_frame_slider', PREVIEW_FRAME_SLIDER)

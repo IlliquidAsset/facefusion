@@ -19,6 +19,10 @@ FaceFusion
 
 > Industry leading face manipulation platform with dataset training capabilities.
 
+[![Build Status](https://img.shields.io/github/actions/workflow/status/facefusion/facefusion/ci.yml.svg?branch=master)](https://github.com/facefusion/facefusion/actions?query=workflow:ci)
+[![Coverage Status](https://img.shields.io/coveralls/facefusion/facefusion.svg)](https://coveralls.io/r/facefusion/facefusion)
+![License](https://img.shields.io/badge/license-OpenRAIL--AS-green)
+
 ## 🚀 Development Environment (HuggingFace Spaces)
 
 ### Quick Start
@@ -43,11 +47,6 @@ This Space now includes a dedicated **Training** tab that allows you to:
 - Learn about InstantID and other advanced face training techniques
 
 **Note**: Full training requires additional dependencies. The training tab provides comprehensive guidance for setting up training in your own environment.
-
-[![Build Status](https://img.shields.io/github/actions/workflow/status/facefusion/facefusion/ci.yml.svg?branch=master)](https://github.com/facefusion/facefusion/actions?query=workflow:ci)
-[![Coverage Status](https://img.shields.io/coveralls/facefusion/facefusion.svg)](https://coveralls.io/r/facefusion/facefusion)
-![License](https://img.shields.io/badge/license-OpenRAIL--AS-green)
-
 Preview
 -------
 
