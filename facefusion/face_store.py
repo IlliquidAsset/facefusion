@@ -1,11 +1,30 @@
+from collections import OrderedDict
 from typing import List, Optional
 
 from facefusion.hash_helper import create_hash
 from facefusion.types import Face, FaceSet, FaceStore, VisionFrame
 
+class BoundedStaticFaceCache(OrderedDict):
+	def __init__(self, maxsize : int = 128) -> None:
+		super().__init__()
+		self.maxsize = maxsize
+
+	def __setitem__(self, key : str, value : List[Face]) -> None:
+		if key in self:
+			self.move_to_end(key)
+		super().__setitem__(key, value)
+		if len(self) > self.maxsize:
+			self.popitem(last = False)
+
+	def get(self, key : str, default : Optional[List[Face]] = None) -> Optional[List[Face]]:
+		if key in self:
+			self.move_to_end(key)
+			return super().__getitem__(key)
+		return default
+
 FACE_STORE : FaceStore =\
 {
-	'static_faces': {},
+	'static_faces': BoundedStaticFaceCache(),
 	'reference_faces': {}
 }
 

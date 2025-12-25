@@ -93,12 +93,12 @@ def get_average_face(faces : List[Face]) -> Optional[Face]:
 	return None
 
 
-def get_many_faces(vision_frames : List[VisionFrame]) -> List[Face]:
+def get_many_faces(vision_frames : List[VisionFrame], skip_cache : bool = False) -> List[Face]:
 	many_faces : List[Face] = []
 
 	for vision_frame in vision_frames:
 		if numpy.any(vision_frame):
-			static_faces = get_static_faces(vision_frame)
+			static_faces = get_static_faces(vision_frame) if not skip_cache else None
 			if static_faces:
 				many_faces.extend(static_faces)
 			else:
@@ -120,5 +120,6 @@ def get_many_faces(vision_frames : List[VisionFrame]) -> List[Face]:
 
 					if faces:
 						many_faces.extend(faces)
-						set_static_faces(vision_frame, faces)
+						if not skip_cache:
+							set_static_faces(vision_frame, faces)
 	return many_faces
