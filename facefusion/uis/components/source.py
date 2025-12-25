@@ -3,6 +3,7 @@ from typing import List, Optional, Tuple
 import gradio
 
 from facefusion import state_manager, wording
+from facefusion.choices import audio_formats, image_formats
 from facefusion.common_helper import get_first
 from facefusion.filesystem import filter_audio_paths, filter_image_paths, has_audio, has_image
 from facefusion.uis.core import register_ui_component
@@ -23,6 +24,7 @@ def render() -> None:
 	SOURCE_FILE = gradio.File(
 		label = wording.get('uis.source_file'),
 		file_count = 'multiple',
+		file_types = [ '.' + format for format in audio_formats + image_formats ],
 		value = state_manager.get_item('source_paths') if has_source_audio or has_source_image else None
 	)
 	source_file_names = [ source_file_value.get('path') for source_file_value in SOURCE_FILE.value ] if SOURCE_FILE.value else None

@@ -3,6 +3,7 @@ from typing import Optional, Tuple
 import gradio
 
 from facefusion import state_manager, wording
+from facefusion.choices import image_formats, video_formats
 from facefusion.face_store import clear_reference_faces, clear_static_faces
 from facefusion.filesystem import is_image, is_video
 from facefusion.uis.core import register_ui_component
@@ -22,6 +23,7 @@ def render() -> None:
 	is_target_video = is_video(state_manager.get_item('target_path'))
 	TARGET_FILE = gradio.File(
 		label = wording.get('uis.target_file'),
+		file_types = [ '.' + format for format in image_formats + video_formats ],
 		value = state_manager.get_item('target_path') if is_target_image or is_target_video else None
 	)
 	target_image_options : ComponentOptions =\
