@@ -26,11 +26,13 @@ def render() -> None:
 	)
 	target_image_options : ComponentOptions =\
 	{
+		'label': wording.get('uis.target_file'),
 		'show_label': False,
 		'visible': False
 	}
 	target_video_options : ComponentOptions =\
 	{
+		'label': wording.get('uis.target_file'),
 		'show_label': False,
 		'visible': False
 	}
