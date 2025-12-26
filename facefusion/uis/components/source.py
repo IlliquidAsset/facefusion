@@ -29,11 +29,13 @@ def render() -> None:
 	source_audio_path = get_first(filter_audio_paths(source_file_names))
 	source_image_path = get_first(filter_image_paths(source_file_names))
 	SOURCE_AUDIO = gradio.Audio(
+		label = wording.get('uis.source_audio'),
 		value = source_audio_path if has_source_audio else None,
 		visible = has_source_audio,
 		show_label = False
 	)
 	SOURCE_IMAGE = gradio.Image(
+		label = wording.get('uis.source_image'),
 		value = source_image_path if has_source_image else None,
 		visible = has_source_image,
 		show_label = False
