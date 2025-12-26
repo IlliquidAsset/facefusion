@@ -57,12 +57,14 @@ def render() -> None:
             
             target_image_options: ComponentOptions = {
                 'show_label': False,
+                'label': "Target image preview",
                 'visible': False,
                 'height': 300,
                 'elem_id': "target_image_preview"
             }
             target_video_options: ComponentOptions = {
                 'show_label': False,
+                'label': "Target video preview",
                 'visible': False,
                 'height': 400,
                 'elem_id': "target_video_preview"
@@ -103,8 +105,8 @@ def update_with_feedback(file: File) -> Tuple[gradio.Image, gradio.Video, str]:
         clear_reference_faces()
         clear_static_faces()
         return (
-            gradio.Image(show_label=False, visible=False),
-            gradio.Video(show_label=False, visible=False),
+            gradio.Image(show_label=False, label="Target image preview", visible=False),
+            gradio.Video(show_label=False, label="Target video preview", visible=False),
             "👆 Upload a target video or image"
         )
     
@@ -126,8 +128,8 @@ def update_with_feedback(file: File) -> Tuple[gradio.Image, gradio.Video, str]:
             status_msg = "✅ Target media loaded successfully!"
         
         return (
-            gradio.Image(value=file_path, show_label=False, visible=is_target_image, height=300),
-            gradio.Video(value=file_path, show_label=False, visible=is_target_video, height=400),
+            gradio.Image(value=file_path, show_label=False, label="Target image preview", visible=is_target_image, height=300),
+            gradio.Video(value=file_path, show_label=False, label="Target video preview", visible=is_target_video, height=400),
             status_msg
         )
     else:
@@ -136,7 +138,7 @@ def update_with_feedback(file: File) -> Tuple[gradio.Image, gradio.Video, str]:
         status_msg = f"❌ Unsupported format: .{file_extension}. Please upload MP4, MOV, JPG, PNG, or other supported media files."
         
         return (
-            gradio.Image(show_label=False, visible=False),
-            gradio.Video(show_label=False, visible=False),
+            gradio.Image(show_label=False, label="Target image preview", visible=False),
+            gradio.Video(show_label=False, label="Target video preview", visible=False),
             status_msg
         )

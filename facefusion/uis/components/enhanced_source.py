@@ -103,6 +103,7 @@ def render() -> None:
                 value=source_audio_path if has_source_audio else None,
                 visible=has_source_audio,
                 show_label=False,
+                label="Source audio preview",
                 elem_id="source_audio_preview"
             )
             
@@ -110,6 +111,7 @@ def render() -> None:
                 value=source_image_path if has_source_image else None,
                 visible=has_source_image,
                 show_label=False,
+                label="Source image preview",
                 height=300,
                 elem_id="source_image_preview"
             )
