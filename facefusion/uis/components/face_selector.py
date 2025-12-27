@@ -52,7 +52,8 @@ def render() -> None:
 	FACE_SELECTOR_MODE_DROPDOWN = gradio.Dropdown(
 		label = wording.get('uis.face_selector_mode_dropdown'),
 		choices = facefusion.choices.face_selector_modes,
-		value = state_manager.get_item('face_selector_mode')
+		value = state_manager.get_item('face_selector_mode'),
+		info = wording.get('help.face_selector_mode')
 	)
 	REFERENCE_FACE_POSITION_GALLERY = gradio.Gallery(**reference_face_gallery_options)
 	with gradio.Group():
@@ -60,17 +61,20 @@ def render() -> None:
 			FACE_SELECTOR_ORDER_DROPDOWN = gradio.Dropdown(
 				label = wording.get('uis.face_selector_order_dropdown'),
 				choices = facefusion.choices.face_selector_orders,
-				value = state_manager.get_item('face_selector_order')
+				value = state_manager.get_item('face_selector_order'),
+				info = wording.get('help.face_selector_order')
 			)
 			FACE_SELECTOR_GENDER_DROPDOWN = gradio.Dropdown(
 				label = wording.get('uis.face_selector_gender_dropdown'),
 				choices = [ 'none' ] + facefusion.choices.face_selector_genders,
-				value = state_manager.get_item('face_selector_gender') or 'none'
+				value = state_manager.get_item('face_selector_gender') or 'none',
+				info = wording.get('help.face_selector_gender')
 			)
 			FACE_SELECTOR_RACE_DROPDOWN = gradio.Dropdown(
 				label = wording.get('uis.face_selector_race_dropdown'),
 				choices = ['none'] + facefusion.choices.face_selector_races,
-				value = state_manager.get_item('face_selector_race') or 'none'
+				value = state_manager.get_item('face_selector_race') or 'none',
+				info = wording.get('help.face_selector_race')
 			)
 		with gradio.Row():
 			face_selector_age_start = state_manager.get_item('face_selector_age_start') or facefusion.choices.face_selector_age_range[0]
@@ -80,7 +84,8 @@ def render() -> None:
 				minimum = facefusion.choices.face_selector_age_range[0],
 				maximum = facefusion.choices.face_selector_age_range[-1],
 				value = (face_selector_age_start, face_selector_age_end),
-				step = calc_int_step(facefusion.choices.face_selector_age_range)
+				step = calc_int_step(facefusion.choices.face_selector_age_range),
+				info = wording.get('help.face_selector_age_start')
 			)
 	REFERENCE_FACE_DISTANCE_SLIDER = gradio.Slider(
 		label = wording.get('uis.reference_face_distance_slider'),
@@ -88,7 +93,8 @@ def render() -> None:
 		step = calc_float_step(facefusion.choices.reference_face_distance_range),
 		minimum = facefusion.choices.reference_face_distance_range[0],
 		maximum = facefusion.choices.reference_face_distance_range[-1],
-		visible = 'reference' in state_manager.get_item('face_selector_mode')
+		visible = 'reference' in state_manager.get_item('face_selector_mode'),
+		info = wording.get('help.reference_face_distance')
 	)
 	register_ui_component('face_selector_mode_dropdown', FACE_SELECTOR_MODE_DROPDOWN)
 	register_ui_component('face_selector_order_dropdown', FACE_SELECTOR_ORDER_DROPDOWN)
