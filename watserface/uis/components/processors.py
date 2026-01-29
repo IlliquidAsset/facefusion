@@ -15,6 +15,7 @@ def render() -> None:
 
 	PROCESSORS_CHECKBOX_GROUP = gradio.CheckboxGroup(
 		label = wording.get('uis.processors_checkbox_group'),
+		info = (wording.get('help.processors') or '').split(' (')[0],
 		choices = sort_processors(state_manager.get_item('processors')),
 		value = state_manager.get_item('processors')
 	)
