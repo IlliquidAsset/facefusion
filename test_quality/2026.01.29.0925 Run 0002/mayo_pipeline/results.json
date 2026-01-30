@@ -1,0 +1,20 @@
+{
+  "inswapper_128": {
+    "identity_transfer": {
+      "original": 0.12401395291090012,
+      "standard_box": 0.8788934946060181,
+      "dirty_swap": 0.8788934946060181,
+      "xseg_composite": 0.8770737648010254,
+      "clean_swap": 0.7472898960113525
+    }
+  },
+  "simswap_unofficial_512": {
+    "identity_transfer": {
+      "original": 0.12401395291090012,
+      "standard_box": 0.7077064514160156,
+      "dirty_swap": 0.7077064514160156,
+      "xseg_composite": 0.7055608630180359,
+      "clean_swap": 0.47763368487358093
+    }
+  }
+}

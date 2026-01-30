@@ -1,0 +1,18 @@
+{
+  "lip_ssim": 0.9127485198620519,
+  "edge_ssim": 0.9505621214285555,
+  "lip_roi_mean_delta": 10.222039220218832,
+  "color_shift_lab": 2.4565792783137703,
+  "non_lip_max_delta": 160.0,
+  "lip_roi_bbox": [
+    1537,
+    894,
+    1743,
+    1062
+  ],
+  "layers": {
+    "warp": false,
+    "blend": true,
+    "inpaint": false
+  }
+}

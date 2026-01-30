@@ -1,0 +1,15 @@
+{
+  "chin_bbox": [
+    1571,
+    1074,
+    1846,
+    1158
+  ],
+  "edge_density": 0.00658008658008658,
+  "edge_pixel_count": 152,
+  "chin_crop_size": [
+    275,
+    84
+  ],
+  "crease_visibility_score": 0.658008658008658
+}

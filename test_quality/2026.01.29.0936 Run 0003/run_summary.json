@@ -1,0 +1,16 @@
+{
+  "run": "2026.01.29.0936 Run 0003",
+  "video": "/Users/kendrick/Documents/FS Source/zBambola.mp4",
+  "frame_range": [
+    60,
+    90
+  ],
+  "key_frame": 72,
+  "frames_processed": 30,
+  "faces_detected": 30,
+  "temporal_consistency": 0.9720522165298462,
+  "identity": {
+    "dirty_swap": 0.8335660696029663,
+    "xseg_composite": 0.8310229778289795
+  }
+}

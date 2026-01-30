@@ -1,0 +1,44 @@
+{
+  "inswapper_128": {
+    "standard_box": {
+      "mean_diff": "0.3%",
+      "changed_pixels": "2.4%"
+    },
+    "dirty_swap": {
+      "mean_diff": "0.3%",
+      "changed_pixels": "2.4%"
+    },
+    "xseg_composite": {
+      "mean_diff": "0.2%",
+      "changed_pixels": "2.1%"
+    },
+    "identity_transfer": {
+      "original": 0.12729187309741974,
+      "standard_box": 0.8781829476356506,
+      "dirty_swap": 0.8781829476356506,
+      "xseg_composite": 0.7143088579177856,
+      "clean_swap": 0.7472898960113525
+    }
+  },
+  "simswap_unofficial_512": {
+    "standard_box": {
+      "mean_diff": "0.3%",
+      "changed_pixels": "3.5%"
+    },
+    "dirty_swap": {
+      "mean_diff": "0.3%",
+      "changed_pixels": "3.5%"
+    },
+    "xseg_composite": {
+      "mean_diff": "0.3%",
+      "changed_pixels": "3.2%"
+    },
+    "identity_transfer": {
+      "original": 0.12729187309741974,
+      "standard_box": 0.7040413618087769,
+      "dirty_swap": 0.7040413618087769,
+      "xseg_composite": 0.6212131381034851,
+      "clean_swap": 0.47763368487358093
+    }
+  }
+}

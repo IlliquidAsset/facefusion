@@ -1,0 +1,14 @@
+{
+  "lip_roi_mean_delta": 7.283014556906272,
+  "non_lip_max_delta": 0.0,
+  "lip_roi_bbox": [
+    1465,
+    809,
+    1817,
+    1153
+  ],
+  "num_lip_landmarks": 31,
+  "source_image": "/Users/kendrick/Documents/FS Source/zBam.png",
+  "target_image": "/Users/kendrick/Documents/FS Source/zBam.png",
+  "pass_non_lip_threshold": true
+}

@@ -1,0 +1,7 @@
+{
+  "edge_ssim": 0.9897216583748546,
+  "color_shift_to_swapped_lab": 57.924946001642624,
+  "color_shift_to_target_lab": 6.19708489139233,
+  "edge_ssim_pass": true,
+  "color_closer_to_source": false
+}

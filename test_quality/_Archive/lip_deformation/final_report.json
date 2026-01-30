@@ -1,0 +1,145 @@
+{
+  "baseline_metrics": {
+    "lip_ssim": 0.8033350614509901,
+    "edge_ssim": 0.8996280768695685,
+    "lip_roi_mean_delta": 16.69120819848975,
+    "color_shift_lab": 1.5207935120107063,
+    "non_lip_max_delta": 160.0,
+    "lip_roi_bbox": [
+      1537,
+      894,
+      1743,
+      1062
+    ],
+    "layers": {
+      "warp": false,
+      "blend": false,
+      "inpaint": false
+    }
+  },
+  "final_metrics": {
+    "lip_ssim": 0.9053154340615175,
+    "edge_ssim": 0.9357956719476268,
+    "lip_roi_mean_delta": 10.992583603020496,
+    "color_shift_lab": 2.8362900988633006,
+    "non_lip_max_delta": 160.0,
+    "lip_roi_bbox": [
+      1537,
+      894,
+      1743,
+      1062
+    ],
+    "layers": {
+      "warp": true,
+      "blend": true,
+      "inpaint": true
+    }
+  },
+  "improvement": 0.10198037261052739,
+  "exit_reason": "ssim_threshold_reached (0.9053 >= 0.85)",
+  "iterations_run": 1,
+  "ssim_threshold": 0.85,
+  "improvement_threshold": 0.01,
+  "max_iterations": 5,
+  "toggle_results": {
+    "warp_only": {
+      "lip_ssim": 0.7670125857261851,
+      "edge_ssim": 0.9098848929888409,
+      "lip_roi_mean_delta": 19.416011712128217,
+      "color_shift_lab": 3.035262413596583,
+      "non_lip_max_delta": 160.0,
+      "lip_roi_bbox": [
+        1537,
+        894,
+        1743,
+        1062
+      ],
+      "layers": {
+        "warp": true,
+        "blend": false,
+        "inpaint": false
+      }
+    },
+    "blend_only": {
+      "lip_ssim": 0.9127485198620519,
+      "edge_ssim": 0.9505621214285555,
+      "lip_roi_mean_delta": 10.222039220218832,
+      "color_shift_lab": 2.4565792783137703,
+      "non_lip_max_delta": 160.0,
+      "lip_roi_bbox": [
+        1537,
+        894,
+        1743,
+        1062
+      ],
+      "layers": {
+        "warp": false,
+        "blend": true,
+        "inpaint": false
+      }
+    },
+    "inpaint_only": {
+      "lip_ssim": 0.8030719198629876,
+      "edge_ssim": 0.9006229670939305,
+      "lip_roi_mean_delta": 16.677483048235477,
+      "color_shift_lab": 1.4368842862966862,
+      "non_lip_max_delta": 160.0,
+      "lip_roi_bbox": [
+        1537,
+        894,
+        1743,
+        1062
+      ],
+      "layers": {
+        "warp": false,
+        "blend": false,
+        "inpaint": true
+      }
+    }
+  },
+  "metrics_history": [
+    {
+      "lip_ssim": 0.8033350614509901,
+      "edge_ssim": 0.8996280768695685,
+      "lip_roi_mean_delta": 16.69120819848975,
+      "color_shift_lab": 1.5207935120107063,
+      "non_lip_max_delta": 160.0,
+      "lip_roi_bbox": [
+        1537,
+        894,
+        1743,
+        1062
+      ],
+      "layers": {
+        "warp": false,
+        "blend": false,
+        "inpaint": false
+      }
+    },
+    {
+      "lip_ssim": 0.9053154340615175,
+      "edge_ssim": 0.9357956719476268,
+      "lip_roi_mean_delta": 10.992583603020496,
+      "color_shift_lab": 2.8362900988633006,
+      "non_lip_max_delta": 160.0,
+      "lip_roi_bbox": [
+        1537,
+        894,
+        1743,
+        1062
+      ],
+      "layers": {
+        "warp": true,
+        "blend": true,
+        "inpaint": true
+      }
+    }
+  ],
+  "self_review": {
+    "lip_ssim_pass_080": true,
+    "improved_over_baseline": true,
+    "strongest_layer": "blend_only",
+    "weakest_layer": "warp_only"
+  },
+  "timestamp": "2026-01-28T10:18:43"
+}

@@ -1,0 +1,24 @@
+{
+    "source": "/Users/kendrick/Documents/FS Source/Sam_Generated.png",
+    "target": "/Users/kendrick/Documents/FS Source/zBam.png",
+    "best_iteration": 0,
+    "best_params": {
+        "landmark_count": 18.0,
+        "scale_factor": 0.7
+    },
+    "metrics": {
+        "ssim": 0.9625768793159345,
+        "psnr": 21.862489529244495,
+        "cg_confidence": 100.0,
+        "identity_verified": true,
+        "face_detected": true
+    },
+    "thresholds": {
+        "ssim": 0.85,
+        "cg": 60.0
+    },
+    "baseline_comparison": {
+        "affine_ssim": 0.9905314028491293,
+        "tps_ssim": 0.9625768793159345
+    }
+}

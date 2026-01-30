@@ -1,0 +1,22 @@
+{
+  "total_slides": 8,
+  "oracle_auto_resolved": 3,
+  "oracle_auto_fixes_applied": 0,
+  "oracle_auto_fixes_available": 2,
+  "slides": [
+    {"number": 1, "label": "Baseline Dirty Swap", "source": "key_09_crop_dirty.png"},
+    {"number": 2, "label": "XSeg Composite", "source": "key_10_crop_composite.png"},
+    {"number": 3, "label": "Original Target", "source": "key_08_crop_original.png"},
+    {"number": 4, "label": "Guided Lip Mask", "source": "key_06_guided_lip_overlay.png"},
+    {"number": 5, "label": "XSeg Raw Mask", "source": "key_04_xseg_raw_overlay.png"},
+    {"number": 6, "label": "Diff Map", "source": "key_11_diff_composite_vs_original.png"},
+    {"number": 7, "label": "Full Frame XSeg Composite", "source": "inswapper-128_03_xseg_composite.png"},
+    {"number": 8, "label": "Mayo Guided Lip Overlay", "source": "inswapper-128_06_guided_lip_overlay.png"}
+  ],
+  "oracle_triage": "oracle_triage.md",
+  "baseline_quality": "../../test_quality/2026.01.29.1132 Run 0006/baseline/baseline_quality.json",
+  "run_dirs": [
+    "test_quality/2026.01.29.1132 Run 0006",
+    "test_quality/2026.01.29.1133 Run 0007"
+  ]
+}

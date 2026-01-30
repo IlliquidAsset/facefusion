@@ -1,0 +1,32 @@
+{
+  "run": "2026.01.29.0912 Run 0001",
+  "timestamp": "2026-01-29T09:12:15.398350",
+  "mayo": {
+    "inswapper_128": {
+      "identity_transfer": {
+        "original": 0.12401395291090012,
+        "standard_box": 0.8788934946060181,
+        "dirty_swap": 0.8788934946060181,
+        "xseg_composite": 0.7071280479431152,
+        "clean_swap": 0.7472898960113525
+      }
+    },
+    "simswap_unofficial_512": {
+      "identity_transfer": {
+        "original": 0.12401395291090012,
+        "standard_box": 0.7077064514160156,
+        "dirty_swap": 0.7077064514160156,
+        "xseg_composite": 0.6163685321807861,
+        "clean_swap": 0.47763368487358093
+      }
+    }
+  },
+  "hybrid": {
+    "crop_size": "523x793",
+    "mesh_hull_coverage": 0.6360915899276733,
+    "mesh_hull_zfiltered_coverage": 0.6176872849464417,
+    "xseg_coverage": 0.43867242336273193,
+    "composite_coverage": 0.3699008524417877
+  },
+  "swap_quality": "completed"
+}

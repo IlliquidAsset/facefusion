@@ -1,0 +1,13 @@
+{
+  "identity_similarity": 0.8789,
+  "background_ssim_proxy": 1.0,
+  "face_sharpness_laplacian": 4.8,
+  "color_shift_lab": 9.5,
+  "edge_discontinuity": 26.31,
+  "model": "inswapper_128",
+  "milestone_0_targets": {
+    "identity_similarity": "TBD - user sets during first interview",
+    "background_ssim": ">= 0.90",
+    "color_shift_lab": "< 5.0"
+  }
+}
