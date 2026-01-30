@@ -137,13 +137,13 @@ def analyse_frame(vision_frame : VisionFrame) -> bool:
 	return detect_nsfw(vision_frame)
 
 
-@lru_cache(maxsize = None)
+@lru_cache(maxsize = 1000)
 def analyse_image(image_path : str) -> bool:
 	vision_frame = read_image(image_path)
 	return analyse_frame(vision_frame)
 
 
-@lru_cache(maxsize = None)
+@lru_cache(maxsize = 1000)
 def analyse_video(video_path : str, trim_frame_start : int, trim_frame_end : int) -> bool:
 	video_fps = detect_video_fps(video_path)
 	frame_range = range(trim_frame_start, trim_frame_end)
