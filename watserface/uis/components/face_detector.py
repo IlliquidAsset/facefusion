@@ -24,6 +24,7 @@ def render() -> None:
 	face_detector_size_dropdown_options : ComponentOptions =\
 	{
 		'label': wording.get('uis.face_detector_size_dropdown'),
+		'info': wording.get('help.face_detector_size'),
 		'value': state_manager.get_item('face_detector_size')
 	}
 	if state_manager.get_item('face_detector_size') in watserface.choices.face_detector_set[state_manager.get_item('face_detector_model')]:
@@ -31,17 +32,20 @@ def render() -> None:
 	with gradio.Row():
 		FACE_DETECTOR_MODEL_DROPDOWN = gradio.Dropdown(
 			label = wording.get('uis.face_detector_model_dropdown'),
+			info = wording.get('help.face_detector_model'),
 			choices = watserface.choices.face_detector_models,
 			value = state_manager.get_item('face_detector_model')
 		)
 		FACE_DETECTOR_SIZE_DROPDOWN = gradio.Dropdown(**face_detector_size_dropdown_options)
 	FACE_DETECTOR_ANGLES_CHECKBOX_GROUP = gradio.CheckboxGroup(
 		label = wording.get('uis.face_detector_angles_checkbox_group'),
+		info = wording.get('help.face_detector_angles'),
 		choices = watserface.choices.face_detector_angles,
 		value = state_manager.get_item('face_detector_angles')
 	)
 	FACE_DETECTOR_SCORE_SLIDER = gradio.Slider(
 		label = wording.get('uis.face_detector_score_slider'),
+		info = wording.get('help.face_detector_score'),
 		value = state_manager.get_item('face_detector_score'),
 		step = calc_float_step(watserface.choices.face_detector_score_range),
 		minimum = watserface.choices.face_detector_score_range[0],
