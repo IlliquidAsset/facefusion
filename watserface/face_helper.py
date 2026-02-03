@@ -9,6 +9,9 @@ from cv2.typing import Size
 
 from watserface.types import Anchors, Angle, BoundingBox, Distance, Face, FaceDetectorModel, FaceLandmark5, FaceLandmark68, FaceLandmark478, Mask, Matrix, Points, Scale, Score, Translation, VisionFrame, WarpTemplate, WarpTemplateSet
 
+_TRIANGULATION_CACHE = {}
+
+
 WARP_TEMPLATE_SET : WarpTemplateSet =\
 {
 	'arcface_112_v1': numpy.array(
@@ -447,14 +450,32 @@ def create_normal_map(landmarks_478: FaceLandmark478, size: Size) -> VisionFrame
 		return numpy.zeros((height, width, 3), dtype=numpy.uint8)
 
 	# 1. Triangulate based on 2D projection
-	try:
-		tri = scipy.spatial.Delaunay(landmarks_478[:, :2])
-	except Exception:
-		return numpy.zeros((height, width, 3), dtype=numpy.uint8)
+	simplices = _TRIANGULATION_CACHE.get(len(landmarks_478))
+	if simplices is None:
+		try:
+			tri = scipy.spatial.Delaunay(landmarks_478[:, :2])
+			simplices = tri.simplices
+
+			# Validity check for caching
+			pts = landmarks_478[:, :2]
+			span = numpy.max(pts, axis=0) - numpy.min(pts, axis=0)
+			max_span = numpy.max(span)
+
+			tri_pts = pts[simplices]
+			d1 = numpy.linalg.norm(tri_pts[:, 0] - tri_pts[:, 1], axis=1)
+			d2 = numpy.linalg.norm(tri_pts[:, 1] - tri_pts[:, 2], axis=1)
+			d3 = numpy.linalg.norm(tri_pts[:, 2] - tri_pts[:, 0], axis=1)
+
+			max_edge = max(d1.max(), d2.max(), d3.max())
+
+			if max_edge < 0.5 * max_span:
+				_TRIANGULATION_CACHE[len(landmarks_478)] = simplices
+		except Exception:
+			return numpy.zeros((height, width, 3), dtype=numpy.uint8)
 
 	# 2. Compute face normals
 	# Get vertices for each triangle
-	tris = landmarks_478[tri.simplices]
+	tris = landmarks_478[simplices]
 	# Vectors for two edges
 	v1 = tris[:, 1] - tris[:, 0]
 	v2 = tris[:, 2] - tris[:, 0]
@@ -478,7 +499,7 @@ def create_normal_map(landmarks_478: FaceLandmark478, size: Size) -> VisionFrame
 
 	# Fill triangles
 	# Note: cv2.fillPoly expects integer points
-	pts = landmarks_478[tri.simplices][:, :, :2].astype(numpy.int32)
+	pts = landmarks_478[simplices][:, :, :2].astype(numpy.int32)
 
 	# We process triangle by triangle or batch.
 	# Batch drawing with separate colors is tricky in pure cv2 without loop.
