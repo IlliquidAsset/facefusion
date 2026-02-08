@@ -1,0 +1,16 @@
+name: user_quality_vs_fast_tradeoff
+description: "User story: User compares Quality vs Fast preset — Quality must be measurably better"
+type: comparative
+priority: high
+tags: [user-story, comparative, presets]
+setup:
+  source_image: source_faces/default.png
+  target_image: target_frames/default.png
+assertions:
+  metrics:
+    - metric: identity_similarity
+      operator: ">="
+      value: 0.50
+    - metric: ssim
+      operator: ">="
+      value: 0.60

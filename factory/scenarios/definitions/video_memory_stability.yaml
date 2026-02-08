@@ -1,0 +1,13 @@
+name: video_memory_stability
+description: "Process video frames and ensure VRAM stays within limits (no OOM)"
+type: performance
+priority: critical
+tags: [performance, vram, video]
+setup:
+  source_image: source_faces/default.png
+  target_video: target_videos/short_clip.mp4
+  preset: balanced
+assertions:
+  performance:
+    peak_vram_mb: 14336
+    processing_time_seconds: 120.0

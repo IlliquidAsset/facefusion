@@ -1,0 +1,14 @@
+name: training_checkpoint_resume
+description: "STUB — Regression scenario for training checkpoint. This scenario type is not yet executable. Requires Phase 4 training integration."
+type: regression
+priority: low
+tags: [training, regression, stub]
+setup:
+  source_image: source_faces/default.png
+  target_image: target_frames/default.png
+assertions:
+  golden_ref: training_checkpoint_baseline
+  metrics:
+    - metric: identity_similarity
+      operator: ">="
+      value: 0.60

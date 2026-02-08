@@ -1,0 +1,20 @@
+name: swap_occlusion_handling
+description: "Face swap with partially occluded target (glasses/hand) — lower thresholds"
+type: visual_quality
+priority: high
+tags: [occlusion, robustness]
+setup:
+  source_image: source_faces/default.png
+  target_image: target_frames/occluded.png
+  preset: balanced
+assertions:
+  metrics:
+    - metric: identity_similarity
+      operator: ">="
+      value: 0.55
+    - metric: ssim
+      operator: ">="
+      value: 0.60
+    - metric: artifact_score
+      operator: "<="
+      value: 0.4

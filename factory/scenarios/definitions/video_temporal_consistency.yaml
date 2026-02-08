@@ -1,0 +1,17 @@
+name: video_temporal_consistency
+description: "Frame-to-frame identity stability across video — identity should not fluctuate wildly"
+type: visual_quality
+priority: high
+tags: [temporal, video, stability]
+setup:
+  source_image: source_faces/default.png
+  target_video: target_videos/short_clip.mp4
+  preset: balanced
+assertions:
+  metrics:
+    - metric: identity_similarity
+      operator: ">="
+      value: 0.60
+    - metric: ssim
+      operator: ">="
+      value: 0.65

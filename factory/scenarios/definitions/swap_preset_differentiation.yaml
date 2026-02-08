@@ -1,0 +1,16 @@
+name: swap_preset_differentiation
+description: "Comparative: Quality preset must score higher than Fast on same input"
+type: comparative
+priority: high
+tags: [comparative, presets]
+setup:
+  source_image: source_faces/default.png
+  target_image: target_frames/default.png
+assertions:
+  metrics:
+    - metric: identity_similarity
+      operator: ">="
+      value: 0.50
+    - metric: ssim
+      operator: ">="
+      value: 0.60

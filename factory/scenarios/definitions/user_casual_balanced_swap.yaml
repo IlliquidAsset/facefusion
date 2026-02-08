@@ -1,0 +1,31 @@
+name: user_casual_balanced_swap
+description: "User story: A casual user performs a face swap with the Balanced preset and expects a natural-looking result"
+type: visual_quality
+priority: critical
+tags: [user-story, casual, balanced]
+setup:
+  source_image: source_faces/default.png
+  target_image: target_frames/default.png
+  preset: balanced
+assertions:
+  metrics:
+    - metric: identity_similarity
+      operator: ">="
+      value: 0.65
+    - metric: ssim
+      operator: ">="
+      value: 0.70
+    - metric: lpips
+      operator: "<="
+      value: 0.3
+    - metric: blur_score
+      operator: ">="
+      value: 0.3
+  llm_judge:
+    enabled: true
+    model: claude-sonnet-4-20250514
+    min_samples: 3
+    dimensions:
+      identity_preservation: 6.0
+      uncanny_valley: 6.0
+      expression_naturalness: 5.0

@@ -1,0 +1,17 @@
+name: user_video_no_oom
+description: "User story: Processing a 30-second video should complete without out-of-memory errors on a T4 GPU (16GB VRAM)"
+type: performance
+priority: critical
+tags: [user-story, video, performance, oom]
+setup:
+  source_image: source_faces/default.png
+  target_video: target_videos/thirty_seconds.mp4
+  preset: balanced
+assertions:
+  performance:
+    peak_vram_mb: 14336
+    processing_time_seconds: 300.0
+  metrics:
+    - metric: identity_similarity
+      operator: ">="
+      value: 0.55
