@@ -11,14 +11,17 @@ Embedding extraction and VRAM tracking are fully functional.
 from __future__ import annotations
 
 import logging
+import importlib
 import time
 from dataclasses import dataclass
-from typing import Optional
+from typing import Any, Optional
 
-import cv2
-import numpy as np
+cv2 = importlib.import_module("cv2")
+np = importlib.import_module("numpy")
+NDArray = Any
 
 from factory.identity import compute_identity_similarity
+from factory.reface_bridge import REFaceBridge
 from factory.state_isolator import StateIsolator
 
 logger = logging.getLogger("factory.orchestrator")
@@ -29,6 +32,14 @@ logger = logging.getLogger("factory.orchestrator")
 # ---------------------------------------------------------------------------
 
 _face_app = None
+_reface_bridge: REFaceBridge | None = None
+
+
+def _get_reface_bridge() -> REFaceBridge:
+    global _reface_bridge
+    if _reface_bridge is None:
+        _reface_bridge = REFaceBridge(device="auto")
+    return _reface_bridge
 
 
 def _get_face_app():
@@ -37,7 +48,7 @@ def _get_face_app():
     if _face_app is not None:
         return _face_app
 
-    import insightface
+    insightface = importlib.import_module("insightface")
 
     app = insightface.app.FaceAnalysis(
         name="buffalo_l",
@@ -48,7 +59,7 @@ def _get_face_app():
     return _face_app
 
 
-def _extract_embedding(img: np.ndarray) -> Optional[np.ndarray]:
+def _extract_embedding(img: NDArray) -> Optional[NDArray]:
     """Extract the L2-normalised ArcFace embedding of the largest face in *img*."""
     app = _get_face_app()
     faces = app.get(img)
@@ -60,7 +71,7 @@ def _extract_embedding(img: np.ndarray) -> Optional[np.ndarray]:
         return (bbox[2] - bbox[0]) * (bbox[3] - bbox[1])
 
     best = max(faces, key=_area)
-    emb: np.ndarray = best.normed_embedding
+    emb = best.normed_embedding
     return emb.astype(np.float32)
 
 
@@ -71,7 +82,7 @@ def _extract_embedding(img: np.ndarray) -> Optional[np.ndarray]:
 def _reset_vram_stats() -> None:
     """Reset CUDA peak memory stats if a GPU is available."""
     try:
-        import torch
+        torch = importlib.import_module("torch")
 
         if torch.cuda.is_available():
             torch.cuda.reset_peak_memory_stats()
@@ -82,7 +93,7 @@ def _reset_vram_stats() -> None:
 def _peak_vram_mb() -> float:
     """Return peak VRAM usage in MB since the last reset, or 0.0 on CPU."""
     try:
-        import torch
+        torch = importlib.import_module("torch")
 
         if torch.cuda.is_available():
             return torch.cuda.max_memory_allocated() / (1024 * 1024)
@@ -99,19 +110,19 @@ def _peak_vram_mb() -> float:
 class SwapResult:
     """Container for the outputs of a single ``run_swap`` invocation."""
 
-    source_frame: np.ndarray
+    source_frame: NDArray
     """The loaded source image (BGR, HWC)."""
 
-    target_frame: np.ndarray
+    target_frame: NDArray
     """The loaded target image (BGR, HWC)."""
 
-    result_frame: np.ndarray
+    result_frame: NDArray
     """The face-swapped output (BGR, HWC)."""
 
-    source_embedding: Optional[np.ndarray]
+    source_embedding: Optional[NDArray]
     """ArcFace embedding of the source face (512-d, L2-normalised)."""
 
-    result_embedding: Optional[np.ndarray]
+    result_embedding: Optional[NDArray]
     """ArcFace embedding of the result face (512-d, L2-normalised)."""
 
     elapsed_seconds: float
@@ -206,18 +217,6 @@ def run_swap(
     )
 
 
-def _execute_swap(source_frame: np.ndarray, target_frame: np.ndarray) -> np.ndarray:
-    """Run the actual face swap.
-
-    TODO(v0.2): Wire up the watserface face_swapper pipeline properly.
-    This requires:
-      1. Configuring state_manager with detector/landmarker/swapper settings
-      2. Detecting the source face via get_many_faces / get_average_face
-      3. Calling face_swapper.process_frame() with the correct FaceSwapperInputs
-    See test_preview.py for the full wiring pattern.
-
-    Current behaviour (v0.1): passthrough — returns target_frame unchanged.
-    Embeddings, timing, and VRAM tracking are fully functional.
-    """
-    # Passthrough stub — the actual swap will be wired in a later task.
-    return target_frame.copy()
+def _execute_swap(source_frame: NDArray, target_frame: NDArray) -> NDArray:
+    bridge = _get_reface_bridge()
+    return bridge.swap(source_frame, target_frame)

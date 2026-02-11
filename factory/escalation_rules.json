@@ -1,0 +1,32 @@
+{
+  "success": {
+    "condition": "all_scenarios_pass",
+    "action": "stop",
+    "message": "All factory scenarios pass. Quality targets achieved."
+  },
+  "plateau": {
+    "condition": "best_metric_delta_lt_0.01_for_3_iterations",
+    "action": "stop",
+    "message": "Metrics plateaued. Best identity_similarity={best}. Threshold={target}."
+  },
+  "regression": {
+    "condition": "metrics_worse_than_best_for_2_iterations",
+    "action": "rollback_to_best_then_try_different_approach",
+    "max_retries": 2
+  },
+  "max_iterations": {
+    "condition": "iteration_count_gte_20",
+    "action": "stop",
+    "message": "Hit 20 iteration cap. Best results at iteration {best_iteration}."
+  },
+  "budget": {
+    "condition": "estimated_cost_gte_10.00",
+    "action": "stop",
+    "message": "RunPod spend approaching ${budget_cap}. Stopping to conserve budget."
+  },
+  "crash": {
+    "condition": "factory_runner_nonzero_exit_no_json",
+    "action": "inspect_fix_retry_once",
+    "max_retries": 1
+  }
+}
