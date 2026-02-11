@@ -98,7 +98,6 @@ class IterationController:
                 scenarios_failed=0,
                 scenarios_skipped=0,
                 results=[],
-                elapsed_seconds=0.0,
             )
             status = 'failed'
             escalation_reason = f'factory_runner_nonzero_exit_no_json: {exc}'
@@ -143,7 +142,6 @@ class IterationController:
             scenarios_passed += report.scenarios_passed
             scenarios_failed += report.scenarios_failed
             scenarios_skipped += report.scenarios_skipped
-            elapsed_seconds += report.elapsed_seconds
             all_results.extend(self._normalize_results(cast(list[object], report.results)))
 
         return FactoryReport(
@@ -152,7 +150,6 @@ class IterationController:
             scenarios_failed=scenarios_failed,
             scenarios_skipped=scenarios_skipped,
             results=all_results,
-            elapsed_seconds=elapsed_seconds,
         )
 
     def _extract_metrics(self, report: FactoryReport) -> dict[str, float]:
@@ -204,7 +201,6 @@ class IterationController:
             'scenarios_passed': report.scenarios_passed,
             'scenarios_failed': report.scenarios_failed,
             'scenarios_skipped': report.scenarios_skipped,
-            'elapsed_seconds': report.elapsed_seconds,
             'results': report_results,
         }
         log_entry: JsonMap = {
