@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import json
+import os
 import subprocess
 import time
 from dataclasses import dataclass
@@ -25,17 +26,17 @@ class RemoteExecutor:
     
     def __init__(
         self,
-        host: str,
+        host: str | None = None,
         port: int = 22,
-        user: str = "root",
-        key_path: str = "~/.ssh/id_ed25519",
-        workspace: str = "/workspace/watserface"
+        user: str | None = None,
+        key_path: str | None = None,
+        workspace: str | None = None
     ):
-        self.host = host
+        self.host = host or os.environ.get("RUNPOD_HOST", "")
         self.port = port
-        self.user = user
-        self.key_path = str(Path(key_path).expanduser())
-        self.workspace = workspace
+        self.user = user or os.environ.get("RUNPOD_USER", "root")
+        self.key_path = str(Path(key_path or os.environ.get("RUNPOD_KEY", "~/.ssh/id_ed25519")).expanduser())
+        self.workspace = workspace or os.environ.get("RUNPOD_WORKSPACE", "/workspace/watserface")
     
     def _run_ssh(self, command: str, timeout: int = 300) -> tuple[str, str, int]:
         """Run command on remote via SSH. Returns (stdout, stderr, exit_code)."""

@@ -449,7 +449,7 @@ Parallel Speedup: ~30% (Tasks 1||2, Tasks 3||4)
 
 ---
 
-- [ ] 3. Wire Factory Orchestrator to REFace
+- [x] 3. Wire Factory Orchestrator to REFace
 
   **What to do**:
   - This is THE critical integration task. The factory orchestrator's `_execute_swap()` currently returns a passthrough (target_frame copy). It must call REFace instead.
@@ -603,7 +603,7 @@ Parallel Speedup: ~30% (Tasks 1||2, Tasks 3||4)
 
 ---
 
-- [ ] 4. Build SSH Execution Bridge
+- [x] 4. Build SSH Execution Bridge
 
   **What to do**:
   - Create `factory/remote.py` — Python module for remote factory execution:
@@ -690,7 +690,7 @@ Parallel Speedup: ~30% (Tasks 1||2, Tasks 3||4)
 
 ---
 
-- [ ] 5. Build Iteration Controller + Escalation Rules
+- [x] 5. Build Iteration Controller + Escalation Rules
 
   **What to do**:
   - This is the brain of the autonomous loop. Create `factory/iteration_controller.py`:
