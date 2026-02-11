@@ -426,3 +426,35 @@ $ python -m factory.runner factory/scenarios/definitions/swap_identity_preservat
 1. SSH key for RunPod access (Task 6)
 2. Local cv2 dependency (expected to be on RunPod)
 
+### SSH Key Discovery (2026-02-11 - Session 5)
+
+**User confirmed**: Public key uploaded to RunPod is `/Users/kendrick/Documents/dev/id_rsa.pub`
+- Private key: `/Users/kendrick/Documents/dev/id_rsa` (RSA, 2048-bit)
+- Fingerprint: `SHA256:RKKbGrjHLk/4gDIBkz9+YRKXSWMQCpLcKkGcWiJocJY`
+
+**SSH Test Result**: ❌ Permission denied (publickey)
+```
+debug1: Offering public key: /Users/kendrick/Documents/dev/id_rsa RSA SHA256:RKKbGrjHLk/...
+6j5e16kr33f7fr-64410bf1@ssh.runpod.io: Permission denied (publickey).
+```
+
+**Analysis**: 
+- Pod IS reachable (proper auth rejection, not timeout/connection refused)
+- Key IS being offered (verbose log confirms identity file sent)
+- Server REJECTS the key
+
+**Possible causes**:
+1. RunPod pod was recreated/restarted and lost the authorized_keys
+2. The public key wasn't saved correctly in RunPod dashboard
+3. RunPod pod ID changed (user needs to verify current pod ID)
+
+**Action required from user**:
+1. Log into RunPod dashboard (https://www.runpod.io/console/pods)
+2. Verify the pod `6j5e16kr33f7fr` is still running
+3. Check SSH settings — re-add the public key if needed
+4. Get the current SSH connection string (may have changed)
+5. Alternative: Use RunPod web terminal to add key manually:
+   ```bash
+   echo "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC8MEdMACsvsNtdtHM4..." >> ~/.ssh/authorized_keys
+   ```
+
