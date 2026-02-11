@@ -29,15 +29,15 @@ User wants the Ralph Visual QA workflow documented in AGENTS.md so agents can di
 Add a section to AGENTS.md that references the Ralph Visual QA workflow.
 
 ### Definition of Done
-- [ ] AGENTS.md contains a "Ralph Visual QA Workflow" section
-- [ ] Section includes trigger command `/ralph-qa`
-- [ ] Section links to `.sisyphus/workflows/ralph-visual-qa.md`
+- [x] AGENTS.md contains a "Ralph Visual QA Workflow" section
+- [x] Section includes trigger command `/ralph-qa`
+- [x] Section links to `.sisyphus/workflows/ralph-visual-qa.md`
 
 ---
 
 ## TODOs
 
-- [ ] 1. Add Ralph QA section to AGENTS.md
+- [x] 1. Add Ralph QA section to AGENTS.md
 
   **What to do**:
   - Open `AGENTS.md`
