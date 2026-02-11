@@ -365,6 +365,14 @@ export RUNPOD_KEY=/path/to/runpod_key
 export RUNPOD_HOST=6j5e16kr33f7fr-64410bf1@ssh.runpod.io
 ```
 
+### Additional Completed Work (2026-02-11)
+
+**Plan: add-ralph-qa-reference.md**
+- ✅ Completed Task 1: Added Ralph Visual QA section to AGENTS.md
+- ✅ Section includes trigger command `/ralph-qa`
+- ✅ Section links to `.sisyphus/workflows/ralph-visual-qa.md`
+- ✅ Committed: `docs(agents): add Ralph Visual QA workflow reference`
+
 ### Final Status Check (2026-02-11 - Session 3)
 
 **SSH Key Search Results**:
