@@ -40,3 +40,30 @@ The codebase contains scaffolding for a high-fidelity occlusion handler intended
 *   **Persistent Logs:** The application maintains a persistent log file named `watserface.log` in the project root. 
 *   **Usage:** Agents should check this file to understand the context of recent failures or console messages without requiring the user to copy-paste.
 *   **Format:** Logs include timestamps and module tags, e.g., `[2026-01-13 10:00:00] [INFO] [CORE] Starting Identity Training...`
+
+---
+
+## Ralph Visual QA Workflow
+
+**Trigger:** `/ralph-qa` or `ralph-qa`
+
+After running tests that produce visual outputs, agents MUST follow this human-in-the-loop review process.
+
+### Rules
+
+1. **Solve what you can solve** - Technical issues (artifacts, missing files, wrong dimensions) are fixed by the agent without asking
+2. **Ask only what requires human judgment** - Aesthetic quality, contextual fit, identity verification
+3. **One image at a time** - Present and discuss each image sequentially
+4. **One question at a time** - Don't overwhelm with multiple questions per image
+
+### What to Ask Humans
+
+| Ask | Don't Ask |
+|-----|-----------|
+| "Does this skin tone look natural?" | "Should I fix this rectangular artifact?" |
+| "Is the identity preserved here?" | "The file is missing, should I regenerate?" |
+| "Is this blur level acceptable?" | "SSIM is 0.75, should I iterate?" |
+
+### Full Workflow Documentation
+
+See `.sisyphus/workflows/ralph-visual-qa.md` for complete protocol.
