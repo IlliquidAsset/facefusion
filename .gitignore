@@ -57,3 +57,13 @@ test_output/
 temp/
 tmp/
 vendors/
+
+# SSH keys and credentials - NEVER commit
+.ssh/
+*.pem
+*.key
+id_ed25519
+id_rsa
+.env
+.env.local
+.env.*.local
