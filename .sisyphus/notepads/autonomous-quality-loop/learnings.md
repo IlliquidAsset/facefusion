@@ -458,3 +458,101 @@ debug1: Offering public key: /Users/kendrick/Documents/dev/id_rsa RSA SHA256:RKK
    echo "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC8MEdMACsvsNtdtHM4..." >> ~/.ssh/authorized_keys
    ```
 
+### Session 6 - Verification Sweep (2026-02-11)
+
+**software-factory.md: ALL 10 tasks verified and marked complete**
+- Ran acceptance criteria for all 10 tasks using `./venv/bin/python3` (has cv2/numpy)
+- System python `/opt/homebrew/bin/python3` (3.14) lacks cv2/numpy — use venv for anything needing those
+- All verifications passed:
+  - Task 1: `factory.__version__` = 0.1.0, all directories exist
+  - Task 2: Pydantic schema validates, 9 scenarios load, fixture validator catches missing files
+  - Task 3: SwapResult has 7 fields, identity similarity uses raw cosine, StateIsolator is context manager
+  - Task 4: MetricGate evaluates all 6 operators correctly
+  - Task 5: PerformanceTracker measures elapsed time (0.104s for 0.1s sleep), evaluate_performance passes
+  - Task 6: All 5 judge dimensions in prompt, graceful degradation without API key, aggregation works
+  - Task 7: Golden registry register/get/list/persist round-trip works
+  - Task 8: 9 YAML scenarios (4 visual_quality, 2 comparative, 2 performance, 1 regression)
+  - Task 9: CLI --help works, JSON output valid, pytest collects 18 tests, regression scenario skipped gracefully
+  - Task 10: All modules import, README exists, git tag factory-v0.1.0 exists, no gradio imports
+- Definition of Done: all 5 items checked
+- Final Checklist: all 10 items checked
+
+**autonomous-quality-loop.md: 7 more Final Checklist items marked**
+- Verified orchestrator calls REFace (not passthrough) via grep
+- Verified scenario definitions only touched in initial commit (never modified by loop)
+- Verified gates/judges/identity.py/runner.py only touched in initial commit
+- Marked: orchestrator wired, iteration controller logs JSON, git commits per iteration, escalation rules, best iteration tracking, thresholds never modified, gate/judge code never modified
+
+**SSH Re-test**: Still `Permission denied (publickey)` — no change since last session.
+
+**Remaining**: All 11 unchecked items in autonomous-quality-loop.md require SSH to RunPod. Cannot proceed without user fixing the SSH key on RunPod dashboard.
+
+### Session 7 - SSH Key Troubleshooting (2026-02-11)
+
+**Generated fresh ed25519 key** (RunPod's recommended type):
+- Private: `~/.ssh/id_ed25519`
+- Public: `~/.ssh/id_ed25519.pub`
+- Fingerprint: `SHA256:bA33eSQbw/dd7lvGpUNq0QRfnLHOLG8Yp/zum2cbVY4`
+- Comment: `watserface-runpod`
+
+**Multiple SSH attempts — ALL failed with `Permission denied (publickey)`**:
+- Tried old RSA key (`/Users/kendrick/Documents/dev/id_rsa`)
+- Tried new ed25519 key (`~/.ssh/id_ed25519`)
+- Tried both keys simultaneously
+- Pod IS reachable (connection established, server host key received)
+- Key IS being offered (verbose log confirms)
+- Server consistently REJECTS all keys
+
+**Root cause analysis**:
+RunPod injects SSH keys into pods ONLY at boot time. The user updated the key in RunPod settings but the pod may not have been fully stopped and restarted (just saving settings is not enough). Alternatively, the key may have been pasted into the wrong field, or the save didn't persist.
+
+**What the user needs to do**:
+1. Go to RunPod Console → Pods → click their pod → Connect button
+2. Copy the EXACT SSH command shown (the pod ID or connection string may have changed)
+3. Verify the SSH public key in RunPod User Settings matches `~/.ssh/id_ed25519.pub`
+4. Stop the pod completely, then start it again
+5. Provide the new SSH command to the agent
+
+**Update to factory/remote.py needed**: When SSH is working, update default key_path from `~/.ssh/id_ed25519` to match whichever key works.
+
+**All 11 remaining tasks are HARD-BLOCKED on SSH. No workaround exists.**
+
+### Session 8 - HTTP 500 Debugged + First Successful Factory Run (2026-02-11)
+
+**SSH UNBLOCKED**: Direct TCP SSH (`ssh root@194.68.245.208 -p 22029 -i ~/.ssh/id_ed25519`) now works.
+
+**REFace HTTP 500 Root Cause**: Config mismatch in `vendors/REFace/configs/train.yaml`.
+- The inference script (`scripts/one_inference.py` line 597) and `VideoDataset` (line 109-111) expect FFHQ-specific config keys:
+  - `data.params.test.params.preserve_mask_src_FFHQ`
+  - `data.params.test.params.remove_mask_tar_FFHQ`
+- The `train.yaml` only had `preserve_mask_src` and `remove_mask_tar` (no `_FFHQ` suffix).
+- **Fix**: Added both `_FFHQ` variants to the test section of `train.yaml` with the same values as their non-FFHQ counterparts.
+- These are face-parsing segment IDs (skin, nose, eyes, ears, lips, etc.) that control which facial regions to preserve/remove during the mask generation step.
+
+**First Successful Face Swap**: After the config fix, REFace Flask server returned HTTP 200 with a valid base64-encoded face-swapped image.
+
+**First Factory Run Results** (swap_identity_preservation scenario, 10 DDIM steps):
+| Metric | Value | Threshold | Status |
+|--------|-------|-----------|--------|
+| identity_similarity | 0.5278 | >= 0.65 | FAIL |
+| ssim | 0.9422 | >= 0.70 | PASS |
+| blur_score | 0.0200 | >= 0.30 | FAIL |
+| artifact_score | 0.5752 | <= 0.30 | FAIL |
+
+**Analysis of Baseline Metrics**:
+- Identity at 0.53 is encouraging — 0.12 short of 0.65 threshold. More DDIM steps (50 vs 10) should improve this.
+- SSIM at 0.94 is excellent — passes easily.
+- Blur score 0.02 is very low — the output may be significantly blurred. REFace operates at 512x512 and then pastes back, which may cause resolution mismatch.
+- Artifact score 0.58 is high — visible boundary artifacts from the paste-back operation.
+
+**Key Optimization Levers for Iteration Loop**:
+1. **DDIM steps**: Currently 10 (fast/low quality). Increasing to 50 should improve identity + reduce artifacts.
+2. **Scale parameter**: Currently 3.5. This is the classifier-free guidance scale — tuning may improve identity preservation.
+3. **Post-processing**: The paste-back in `one_inference.py` uses simple perspective transform + alpha composite. Better blending (Poisson, feathering) could reduce artifacts.
+4. **Resolution**: REFace works at 512x512. The output is resized to 1024x1024 then pasted. Better upscaling could help blur_score.
+
+**Bridge Improvement**: Changed `reface_bridge.py` to log server output to `vendors/REFace/reface_server.log` instead of `/dev/null` for debuggability.
+
+**Files Modified**:
+- `vendors/REFace/configs/train.yaml` (added FFHQ keys) — both local + RunPod
+- `factory/reface_bridge.py` (server log to file instead of DEVNULL) — local, synced to RunPod

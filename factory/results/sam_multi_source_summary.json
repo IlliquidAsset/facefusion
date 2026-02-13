@@ -1,0 +1,87 @@
+{
+  "results": [
+    {
+      "source": "Sam01.jpg",
+      "identity": 0.4437054693698883,
+      "time": 50.7442102432251
+    },
+    {
+      "source": "Sam02.jpg",
+      "identity": 0.391582727432251,
+      "time": 20.1747944355011
+    },
+    {
+      "source": "Sam03.jpg",
+      "identity": 0.3568890690803528,
+      "time": 20.702078580856323
+    },
+    {
+      "source": "Sam04.jpg",
+      "identity": 0.4242558479309082,
+      "time": 20.427618980407715
+    },
+    {
+      "source": "Sam05.jpg",
+      "identity": 0.5317096710205078,
+      "time": 20.83804726600647
+    },
+    {
+      "source": "Sam06.jpg",
+      "identity": 0.4399759769439697,
+      "time": 20.927871227264404
+    },
+    {
+      "source": "Sam07.jpg",
+      "identity": 0.3764074444770813,
+      "time": 19.438021659851074
+    },
+    {
+      "source": "Sam08.jpg",
+      "identity": 0.47026777267456055,
+      "time": 19.72351050376892
+    },
+    {
+      "source": "Sam09.jpg",
+      "identity": 0.4426388442516327,
+      "time": 18.679149389266968
+    },
+    {
+      "source": "Sam10.jpg",
+      "identity": 0.5468370914459229,
+      "time": 19.53897190093994
+    },
+    {
+      "source": "Sam11.JPG",
+      "identity": 0.3984043598175049,
+      "time": 18.981303691864014
+    },
+    {
+      "source": "Sam12.png",
+      "identity": 0.4849705100059509,
+      "time": 16.359426498413086
+    },
+    {
+      "source": "Sam13.png",
+      "identity": 0.5207128524780273,
+      "time": 17.60659408569336
+    },
+    {
+      "source": "Sam14.png",
+      "identity": 0.5059819221496582,
+      "time": 18.570205450057983
+    },
+    {
+      "source": "Sam15.png",
+      "identity": 0.520461916923523,
+      "time": 17.00543451309204
+    },
+    {
+      "source": "Sam_Generated.png",
+      "identity": 0.5111589431762695,
+      "time": 15.905317068099976
+    }
+  ],
+  "average_identity": 0.46037252619862556,
+  "best_source": "Sam10.jpg",
+  "best_identity": 0.5468370914459229
+}

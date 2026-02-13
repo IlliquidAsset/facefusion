@@ -206,6 +206,9 @@ def run_swap(
         sim = compute_identity_similarity(source_embedding, result_embedding)
         logger.info("identity similarity: %.4f", sim)
 
+    # --- save result images for telemetry dashboard ---
+    _save_result_images(source_frame, target_frame, result_frame)
+
     return SwapResult(
         source_frame=source_frame,
         target_frame=target_frame,
@@ -215,6 +218,45 @@ def run_swap(
         elapsed_seconds=elapsed,
         peak_vram_mb=vram,
     )
+
+
+def _save_result_images(
+    source_frame: NDArray,
+    target_frame: NDArray,
+    result_frame: NDArray,
+) -> None:
+    from pathlib import Path
+    from datetime import datetime
+
+    out_dir = Path("factory/results/latest")
+    out_dir.mkdir(parents=True, exist_ok=True)
+
+    cv2.imwrite(str(out_dir / "source.png"), source_frame)
+    cv2.imwrite(str(out_dir / "target.png"), target_frame)
+    cv2.imwrite(str(out_dir / "result.png"), result_frame)
+
+    h = 512
+    panels = []
+    for img, label in [
+        (source_frame, "SOURCE"),
+        (target_frame, "TARGET"),
+        (result_frame, "RESULT"),
+    ]:
+        aspect = img.shape[1] / img.shape[0]
+        resized = cv2.resize(img, (int(h * aspect), h))
+        cv2.putText(resized, label, (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 0.8, (0, 255, 255), 2)
+        panels.append(resized)
+
+    comparison = np.hstack(panels)
+    cv2.imwrite(str(out_dir / "comparison.png"), comparison)
+
+    ts = datetime.now().strftime("%Y%m%d_%H%M%S")
+    archive_dir = Path("factory/results") / ts
+    archive_dir.mkdir(parents=True, exist_ok=True)
+    cv2.imwrite(str(archive_dir / "comparison.png"), comparison)
+    cv2.imwrite(str(archive_dir / "result.png"), result_frame)
+
+    logger.info("Result images saved to %s", out_dir)
 
 
 def _execute_swap(source_frame: NDArray, target_frame: NDArray) -> NDArray:

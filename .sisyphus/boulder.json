@@ -1,9 +1,6 @@
 {
-  "active_plan": "/Users/kendrick/Documents/dev/watserface/.sisyphus/plans/autonomous-quality-loop.md",
-  "started_at": "2026-02-11T15:50:46.645Z",
-  "session_ids": [
-    "ses_3b2d6915dffegNuAVQqJ5mFzrJ",
-    "ses_3b289a38bffe6hbaj4A0535j81"
-  ],
-  "plan_name": "autonomous-quality-loop"
+  "active_plan": "/Users/kendrick/Documents/dev/watserface/.sisyphus/plans/telemetry-dashboard-redesign.md",
+  "started_at": "2026-02-12T16:08:28.546Z",
+  "session_ids": ["ses_3ad6ed5d0ffeXRz06uNRxKgBt8"],
+  "plan_name": "telemetry-dashboard-redesign"
 }

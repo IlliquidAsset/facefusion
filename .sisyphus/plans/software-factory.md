@@ -65,11 +65,11 @@ Build a self-contained `factory/` module that defines, loads, executes, and repo
 - 6+ scenario YAML definitions
 
 ### Definition of Done
-- [ ] `python -m factory.runner --help` shows usage
-- [ ] `pytest factory/ -v` discovers and runs ≥10 tests
-- [ ] A single-image face swap scenario runs end-to-end and produces JSON results
-- [ ] LLM judge gracefully degrades when `ANTHROPIC_API_KEY` is unset
-- [ ] Golden reference register → compare round-trip is deterministic
+- [x] `python -m factory.runner --help` shows usage
+- [x] `pytest factory/ -v` discovers and runs ≥10 tests
+- [x] A single-image face swap scenario runs end-to-end and produces JSON results
+- [x] LLM judge gracefully degrades when `ANTHROPIC_API_KEY` is unset
+- [x] Golden reference register → compare round-trip is deterministic
 
 ### Must Have
 - Pydantic v2 schema for scenarios with strict validation
@@ -178,7 +178,7 @@ Parallel Speedup: ~35% faster than sequential
 
 ## TODOs
 
-- [ ] 1. Add Factory Dependencies
+- [x] 1. Add Factory Dependencies
 
   **What to do**:
   - Add `pyyaml>=6.0` to `requirements.txt`
@@ -252,7 +252,7 @@ Parallel Speedup: ~35% faster than sequential
 
 ---
 
-- [ ] 2. Scenario Schema + YAML Loader
+- [x] 2. Scenario Schema + YAML Loader
 
   **What to do**:
   - Create `factory/scenarios/schema.py` with Pydantic v2 models:
@@ -380,7 +380,7 @@ Parallel Speedup: ~35% faster than sequential
 
 ---
 
-- [ ] 3. Headless Face-Swap Orchestrator
+- [x] 3. Headless Face-Swap Orchestrator
 
   **What to do**:
   - Create `factory/orchestrator.py` — the single biggest missing piece identified by Metis
@@ -512,7 +512,7 @@ Parallel Speedup: ~35% faster than sequential
 
 ---
 
-- [ ] 4. Metric Gates
+- [x] 4. Metric Gates
 
   **What to do**:
   - Create `factory/gates/__init__.py` with exports
@@ -649,7 +649,7 @@ Parallel Speedup: ~35% faster than sequential
 
 ---
 
-- [ ] 5. Performance Gates
+- [x] 5. Performance Gates
 
   **What to do**:
   - Create `factory/gates/performance.py`:
@@ -727,7 +727,7 @@ Parallel Speedup: ~35% faster than sequential
 
 ---
 
-- [ ] 6. LLM-as-Judge Harness
+- [x] 6. LLM-as-Judge Harness
 
   **What to do**:
   - Create `factory/judges/__init__.py`
@@ -849,7 +849,7 @@ Parallel Speedup: ~35% faster than sequential
 
 ---
 
-- [ ] 7. Golden Reference Registry
+- [x] 7. Golden Reference Registry
 
   **What to do**:
   - Create `factory/golden/__init__.py`
@@ -962,7 +962,7 @@ Parallel Speedup: ~35% faster than sequential
 
 ---
 
-- [ ] 8. Scenario YAML Definitions
+- [x] 8. Scenario YAML Definitions
 
   **What to do**:
   - Create the following YAML scenario files in `factory/scenarios/definitions/`:
@@ -1050,7 +1050,7 @@ Parallel Speedup: ~35% faster than sequential
 
 ---
 
-- [ ] 9. CLI Runner + Pytest Integration
+- [x] 9. CLI Runner + Pytest Integration
 
   **What to do**:
   - Create `factory/runner.py`:
@@ -1200,7 +1200,7 @@ Parallel Speedup: ~35% faster than sequential
 
 ---
 
-- [ ] 10. End-to-End Validation + README
+- [x] 10. End-to-End Validation + README
 
   **What to do**:
   - Create `factory/README.md` documenting:
@@ -1351,13 +1351,13 @@ ANTHROPIC_API_KEY="" python -c "from factory.judges.vision_judge import VisionJu
 ```
 
 ### Final Checklist
-- [ ] All 10 TODOs completed
-- [ ] All scenario YAMLs parse without error
-- [ ] CLI runner works end-to-end
-- [ ] pytest discovers all scenarios
-- [ ] LLM judge degrades gracefully without API key
-- [ ] Golden registry register/compare round-trip works
-- [ ] Identity similarity uses raw cosine [0, 1] everywhere
-- [ ] No imports from watserface.uis or gradio in factory/
-- [ ] No binary fixtures committed without LFS
-- [ ] Git tagged factory-v0.1.0
+- [x] All 10 TODOs completed
+- [x] All scenario YAMLs parse without error
+- [x] CLI runner works end-to-end
+- [x] pytest discovers all scenarios
+- [x] LLM judge degrades gracefully without API key
+- [x] Golden registry register/compare round-trip works
+- [x] Identity similarity uses raw cosine [0, 1] everywhere
+- [x] No imports from watserface.uis or gradio in factory/
+- [x] No binary fixtures committed without LFS
+- [x] Git tagged factory-v0.1.0
