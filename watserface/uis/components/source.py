@@ -22,6 +22,7 @@ def render() -> None:
 	has_source_image = has_image(state_manager.get_item('source_paths'))
 	SOURCE_FILE = gradio.File(
 		label = wording.get('uis.source_file'),
+		info = wording.get('help.source_paths'),
 		file_count = 'multiple',
 		file_types =
 		[
