@@ -18,11 +18,13 @@ def render() -> None:
 
 	FACE_LANDMARKER_MODEL_DROPDOWN = gradio.Dropdown(
 		label = wording.get('uis.face_landmarker_model_dropdown'),
+		info = wording.get('help.face_landmarker_model'),
 		choices = watserface.choices.face_landmarker_models,
 		value = state_manager.get_item('face_landmarker_model')
 	)
 	FACE_LANDMARKER_SCORE_SLIDER = gradio.Slider(
 		label = wording.get('uis.face_landmarker_score_slider'),
+		info = wording.get('help.face_landmarker_score'),
 		value = state_manager.get_item('face_landmarker_score'),
 		step = calc_float_step(watserface.choices.face_landmarker_score_range),
 		minimum = watserface.choices.face_landmarker_score_range[0],
