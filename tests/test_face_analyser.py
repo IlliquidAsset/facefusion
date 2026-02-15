@@ -1,5 +1,4 @@
-import subprocess
-
+import cv2
 import pytest
 
 from watserface import face_classifier, face_detector, face_landmarker, face_recognizer, state_manager
@@ -10,15 +9,26 @@ from watserface.vision import read_static_image
 from .helper import get_test_example_file, get_test_examples_directory
 
 
+def crop_image(input_path : str, output_path : str, scale : float) -> None:
+	image = cv2.imread(input_path)
+	height, width = image.shape[:2]
+	crop_height = int(height * scale)
+	crop_width = int(width * scale)
+	start_y = (height - crop_height) // 2
+	start_x = (width - crop_width) // 2
+	image = image[start_y:start_y + crop_height, start_x:start_x + crop_width]
+	cv2.imwrite(output_path, image)
+
+
 @pytest.fixture(scope = 'module', autouse = True)
 def before_all() -> None:
 	conditional_download(get_test_examples_directory(),
 	[
 		'https://github.com/facefusion/facefusion-assets/releases/download/examples-3.0.0/source.jpg'
 	])
-	subprocess.run([ 'ffmpeg', '-i', get_test_example_file('source.jpg'), '-vf', 'crop=iw*0.8:ih*0.8', get_test_example_file('source-80crop.jpg') ])
-	subprocess.run([ 'ffmpeg', '-i', get_test_example_file('source.jpg'), '-vf', 'crop=iw*0.7:ih*0.7', get_test_example_file('source-70crop.jpg') ])
-	subprocess.run([ 'ffmpeg', '-i', get_test_example_file('source.jpg'), '-vf', 'crop=iw*0.6:ih*0.6', get_test_example_file('source-60crop.jpg') ])
+	crop_image(get_test_example_file('source.jpg'), get_test_example_file('source-80crop.jpg'), 0.8)
+	crop_image(get_test_example_file('source.jpg'), get_test_example_file('source-70crop.jpg'), 0.7)
+	crop_image(get_test_example_file('source.jpg'), get_test_example_file('source-60crop.jpg'), 0.6)
 	state_manager.init_item('execution_device_id', '0')
 	state_manager.init_item('execution_providers', [ 'cpu' ])
 	state_manager.init_item('download_providers', [ 'github' ])
