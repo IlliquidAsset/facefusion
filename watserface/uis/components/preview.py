@@ -93,6 +93,7 @@ def render() -> None:
 	preview_frame_slider_options : ComponentOptions =\
 	{
 		'label': wording.get('uis.preview_frame_slider'),
+		'info': wording.get('help.preview_frame_slider'),
 		'step': 1,
 		'minimum': 0,
 		'maximum': 100,

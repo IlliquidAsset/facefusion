@@ -137,6 +137,7 @@ WORDING : Dict[str, Any] =\
 		# frame extraction
 		'trim_frame_start': 'specify the starting frame of the target video',
 		'trim_frame_end': 'specify the ending frame of the target video',
+		'trim_frame_slider': 'select the range of frames to process from the target video',
 		'temp_frame_format': 'specify the temporary resources format',
 		'keep_temp': 'keep the temporary resources after processing',
 		# output creation
@@ -190,6 +191,7 @@ WORDING : Dict[str, Any] =\
 		'open_browser': 'open the browser once the program is ready',
 		'ui_layouts': 'launch a single or multiple UI layouts (choices: {choices}, ...)',
 		'ui_workflow': 'choose the ui workflow',
+		'preview_frame_slider': 'specify the frame to preview from the target video',
 		# download
 		'download_providers': 'download using different providers (choices: {choices}, ...)',
 		'download_scope': 'specify the download scope',

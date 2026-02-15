@@ -18,6 +18,7 @@ def render() -> None:
 	trim_frame_range_slider_options : ComponentOptions =\
 	{
 		'label': wording.get('uis.trim_frame_slider'),
+		'info': wording.get('help.trim_frame_slider'),
 		'minimum': 0,
 		'step': 1,
 		'visible': False
