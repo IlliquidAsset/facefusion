@@ -13,8 +13,10 @@ PROCESSORS_CHECKBOX_GROUP : Optional[gradio.CheckboxGroup] = None
 def render() -> None:
 	global PROCESSORS_CHECKBOX_GROUP
 
+	available_processors = [ get_file_name(file_path) for file_path in resolve_file_paths('watserface/processors/modules') ]
 	PROCESSORS_CHECKBOX_GROUP = gradio.CheckboxGroup(
 		label = wording.get('uis.processors_checkbox_group'),
+		info = wording.get('help.processors').format(choices = ', '.join(available_processors)),
 		choices = sort_processors(state_manager.get_item('processors')),
 		value = state_manager.get_item('processors')
 	)
