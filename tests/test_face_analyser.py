@@ -1,5 +1,6 @@
 import subprocess
 
+import cv2
 import pytest
 
 from watserface import face_classifier, face_detector, face_landmarker, face_recognizer, state_manager
@@ -16,9 +17,16 @@ def before_all() -> None:
 	[
 		'https://github.com/facefusion/facefusion-assets/releases/download/examples-3.0.0/source.jpg'
 	])
-	subprocess.run([ 'ffmpeg', '-i', get_test_example_file('source.jpg'), '-vf', 'crop=iw*0.8:ih*0.8', get_test_example_file('source-80crop.jpg') ])
-	subprocess.run([ 'ffmpeg', '-i', get_test_example_file('source.jpg'), '-vf', 'crop=iw*0.7:ih*0.7', get_test_example_file('source-70crop.jpg') ])
-	subprocess.run([ 'ffmpeg', '-i', get_test_example_file('source.jpg'), '-vf', 'crop=iw*0.6:ih*0.6', get_test_example_file('source-60crop.jpg') ])
+	source_path = get_test_example_file('source.jpg')
+	source_image = cv2.imread(source_path)
+	if source_image is not None:
+		height, width = source_image.shape[:2]
+		for scale, name in [ (0.8, 'source-80crop.jpg'), (0.7, 'source-70crop.jpg'), (0.6, 'source-60crop.jpg') ]:
+			crop_width, crop_height = int(width * scale), int(height * scale)
+			start_x, start_y = (width - crop_width) // 2, (height - crop_height) // 2
+			crop_image = source_image[start_y:start_y + crop_height, start_x:start_x + crop_width]
+			cv2.imwrite(get_test_example_file(name), crop_image)
+
 	state_manager.init_item('execution_device_id', '0')
 	state_manager.init_item('execution_providers', [ 'cpu' ])
 	state_manager.init_item('download_providers', [ 'github' ])
