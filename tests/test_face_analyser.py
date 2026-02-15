@@ -111,3 +111,36 @@ def test_get_many_faces() -> None:
 	assert isinstance(many_faces[0], Face)
 	assert isinstance(many_faces[1], Face)
 	assert isinstance(many_faces[2], Face)
+
+
+def test_get_one_face_without_face_classification() -> None:
+	source_path = get_test_example_file('source.jpg')
+	source_frame = read_static_image(source_path)
+	state_manager.set_item('face_selector_gender', None)
+	state_manager.set_item('face_selector_race', None)
+	state_manager.set_item('face_selector_age_start', None)
+	state_manager.set_item('face_selector_age_end', None)
+	face_classifier.classify_face = lambda vision_frame, face_landmark_5: (None, None, None)
+
+	many_faces = get_many_faces([ source_frame ])
+	face = get_one_face(many_faces)
+
+	assert face.gender is None
+	assert face.age is None
+	assert face.race is None
+
+
+def test_get_one_face_with_face_classification() -> None:
+	source_path = get_test_example_file('source.jpg')
+	source_frame = read_static_image(source_path)
+	state_manager.set_item('face_selector_gender', 'female')
+	state_manager.set_item('face_selector_race', 'white')
+	state_manager.set_item('face_selector_age_start', 0)
+	state_manager.set_item('face_selector_age_end', 100)
+
+	many_faces = get_many_faces([ source_frame ])
+	face = get_one_face(many_faces)
+
+	assert face.gender is not None
+	assert face.age is not None
+	assert face.race is not None

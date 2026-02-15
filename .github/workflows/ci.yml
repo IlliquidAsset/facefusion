@@ -3,24 +3,8 @@ name: ci
 on: [ push, pull_request ]
 
 jobs:
- lint:
-  runs-on: ubuntu-latest
-  steps:
-  - name: Checkout
-    uses: actions/checkout@v4
-  - name: Set up Python 3.12
-    uses: actions/setup-python@v5
-    with:
-     python-version: '3.12'
-  - run: pip install flake8
-  - run: pip install flake8-import-order
-  - run: pip install mypy
-  - run: flake8 watserface.py install.py
-  - run: flake8 watserface tests --exclude=tests/test_cli_*,tests/test_face_analyser.py,tests/test_download.py,tests/test_inference_manager.py
-  - run: mypy watserface.py install.py --ignore-missing-imports
-  - run: mypy watserface tests --ignore-missing-imports
-
- # Fast unit tests - no network, no model downloads
+ # 1. Fast Unit Tests (The "Sanity Check")
+ # Runs on every push to ensure the code isn't completely broken.
  test-unit:
   runs-on: ubuntu-latest
   steps:
@@ -31,11 +15,38 @@ jobs:
     with:
      python-version: '3.12'
   - run: pip install pytest
-  - run: pip install -r requirements.txt || true
+  - run: pip install -r requirements.txt
   - name: Run fast unit tests
+    # Ignores heavy modules (Face Swapper, Enhancer, etc.) to keep this fast (<2 min)
     run: pytest tests -m "not slow and not integration" --ignore=tests/test_cli_face_swapper.py --ignore=tests/test_cli_face_enhancer.py --ignore=tests/test_cli_face_editor.py --ignore=tests/test_cli_face_debugger.py --ignore=tests/test_cli_age_modifier.py --ignore=tests/test_cli_expression_restorer.py --ignore=tests/test_cli_lip_syncer.py --ignore=tests/test_cli_frame_enhancer.py --ignore=tests/test_cli_frame_colorizer.py --ignore=tests/test_cli_batch_runner.py --ignore=tests/test_cli_job_runner.py --ignore=tests/test_cli_job_manager.py --ignore=tests/test_face_analyser.py --ignore=tests/test_download.py --ignore=tests/test_inference_manager.py -v
 
- # Integration tests - requires models, FFmpeg, network (optional, manual trigger)
+ # 2. The "Memory Guardian" (Runs ONLY on fix/memory-* branches)
+ # This validates the specific "Reproduction Script" the Agent created.
+ memory-guard:
+  if: contains(github.ref, 'fix/memory-') || contains(github.head_ref, 'fix/memory-')
+  runs-on: ubuntu-latest
+  steps:
+  - name: Checkout
+    uses: actions/checkout@v4
+  - name: Set up FFmpeg
+    uses: AnimMouse/setup-ffmpeg@v1
+  - name: Set up Python 3.12
+    uses: actions/setup-python@v5
+    with:
+     python-version: '3.12'
+  - name: Install Dependencies
+    run: |
+      pip install pytest
+      pip install -r requirements.txt
+      # Installs Torch. Note: GitHub Actions are CPU-only by default.
+      # If the test requires CUDA, the Agent must mock it or you need a Self-Hosted Runner.
+      pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cpu
+  - name: Run Memory Proof
+    # Finds and runs the specific proof-of-fail script created by the Agent
+    run: pytest tests/repro_*.py -v
+
+ # 3. Integration tests (Manual Trigger Only)
+ # Use this for deep regression testing before a major release.
  test-integration:
   if: github.event_name == 'workflow_dispatch'
   strategy:

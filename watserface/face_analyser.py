@@ -13,6 +13,16 @@ from watserface.face_store import get_static_faces, set_static_faces
 from watserface.types import BoundingBox, Face, FaceLandmark5, FaceLandmarkSet, FaceScoreSet, Score, VisionFrame
 
 
+def needs_face_classification() -> bool:
+	if state_manager.get_item('face_selector_gender'):
+		return True
+	if state_manager.get_item('face_selector_race'):
+		return True
+	if state_manager.get_item('face_selector_age_start') or state_manager.get_item('face_selector_age_end'):
+		return True
+	return False
+
+
 def create_faces(vision_frame : VisionFrame, bounding_boxes : List[BoundingBox], face_scores : List[Score], face_landmarks_5 : List[FaceLandmark5]) -> List[Face]:
 	faces = []
 	nms_threshold = get_nms_threshold(state_manager.get_item('face_detector_model'), state_manager.get_item('face_detector_angles'))
@@ -51,7 +61,9 @@ def create_faces(vision_frame : VisionFrame, bounding_boxes : List[BoundingBox],
 			'landmarker': face_landmark_score_68
 		}
 		embedding, normed_embedding = calc_embedding(vision_frame, face_landmark_set.get('5/68'))
-		gender, age, race = classify_face(vision_frame, face_landmark_set.get('5/68'))
+		gender, age, race = None, None, None
+		if needs_face_classification():
+			gender, age, race = classify_face(vision_frame, face_landmark_set.get('5/68'))
 		faces.append(Face(
 			bounding_box = bounding_box,
 			score_set = face_score_set,
