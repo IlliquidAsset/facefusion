@@ -1,6 +1,6 @@
 import math
 from functools import lru_cache
-from typing import List, Sequence, Tuple
+from typing import Dict, List, Sequence, Tuple
 
 import cv2
 import numpy
@@ -8,6 +8,9 @@ import scipy.spatial
 from cv2.typing import Size
 
 from watserface.types import Anchors, Angle, BoundingBox, Distance, Face, FaceDetectorModel, FaceLandmark5, FaceLandmark68, FaceLandmark478, Mask, Matrix, Points, Scale, Score, Translation, VisionFrame, WarpTemplate, WarpTemplateSet
+
+_TRIANGULATION_CACHE : Dict[int, List[numpy.ndarray]] = {}
+
 
 WARP_TEMPLATE_SET : WarpTemplateSet =\
 {
@@ -447,14 +450,63 @@ def create_normal_map(landmarks_478: FaceLandmark478, size: Size) -> VisionFrame
 		return numpy.zeros((height, width, 3), dtype=numpy.uint8)
 
 	# 1. Triangulate based on 2D projection
-	try:
-		tri = scipy.spatial.Delaunay(landmarks_478[:, :2])
-	except Exception:
-		return numpy.zeros((height, width, 3), dtype=numpy.uint8)
+	# Optimization: Cache triangulation indices (simplices) to avoid expensive Delaunay computation (~2ms)
+	# We maintain a list of valid topologies to handle multiple faces/poses without thrashing
+	num_landmarks = landmarks_478.shape[0]
+	simplices = None
+
+	if num_landmarks not in _TRIANGULATION_CACHE:
+		_TRIANGULATION_CACHE[num_landmarks] = []
+
+	# Calculate face span for validity check (max edge length < 0.5 * face span)
+	# This prevents reusing a topology that is distorted in the current view (e.g. profile vs frontal)
+	points_2d = landmarks_478[:, :2]
+	min_xy = numpy.min(points_2d, axis=0)
+	max_xy = numpy.max(points_2d, axis=0)
+	face_span = max(max_xy[0] - min_xy[0], max_xy[1] - min_xy[1])
+	threshold_sq = (0.5 * face_span) ** 2
+
+	# Check cached candidates
+	candidates = _TRIANGULATION_CACHE[num_landmarks]
+	for i, candidate_simplices in enumerate(candidates):
+		# Verify topology validity
+		candidate_tris = points_2d[candidate_simplices]
+
+		# Vectorized edge length check
+		d1 = candidate_tris[:, 1] - candidate_tris[:, 0]
+		d2 = candidate_tris[:, 2] - candidate_tris[:, 1]
+		d3 = candidate_tris[:, 0] - candidate_tris[:, 2]
+
+		# Squared lengths
+		l1 = numpy.sum(d1**2, axis=1)
+		l2 = numpy.sum(d2**2, axis=1)
+		l3 = numpy.sum(d3**2, axis=1)
+
+		max_len_sq = max(l1.max(), l2.max(), l3.max())
+
+		if max_len_sq < threshold_sq:
+			simplices = candidate_simplices
+			# Move to front (LRU)
+			if i > 0:
+				candidates.pop(i)
+				candidates.insert(0, simplices)
+			break
+
+	if simplices is None:
+		try:
+			tri = scipy.spatial.Delaunay(points_2d)
+			simplices = tri.simplices
+			# Add to cache
+			candidates.insert(0, simplices)
+			# Limit cache size per landmark count
+			if len(candidates) > 3:
+				candidates.pop()
+		except Exception:
+			return numpy.zeros((height, width, 3), dtype=numpy.uint8)
 
 	# 2. Compute face normals
 	# Get vertices for each triangle
-	tris = landmarks_478[tri.simplices]
+	tris = landmarks_478[simplices]
 	# Vectors for two edges
 	v1 = tris[:, 1] - tris[:, 0]
 	v2 = tris[:, 2] - tris[:, 0]
@@ -478,7 +530,7 @@ def create_normal_map(landmarks_478: FaceLandmark478, size: Size) -> VisionFrame
 
 	# Fill triangles
 	# Note: cv2.fillPoly expects integer points
-	pts = landmarks_478[tri.simplices][:, :, :2].astype(numpy.int32)
+	pts = landmarks_478[simplices][:, :, :2].astype(numpy.int32)
 
 	# We process triangle by triangle or batch.
 	# Batch drawing with separate colors is tricky in pure cv2 without loop.
