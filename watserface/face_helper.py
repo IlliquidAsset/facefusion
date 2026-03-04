@@ -159,6 +159,17 @@ def warp_face_by_translation(temp_vision_frame : VisionFrame, translation : Tran
 	return crop_vision_frame, affine_matrix
 
 
+@lru_cache(maxsize=None)
+def create_tps_grid(target_width: int, target_height: int) -> Points:
+	grid_x, grid_y = numpy.meshgrid(
+		numpy.linspace(0, 1, target_width),
+		numpy.linspace(0, 1, target_height)
+	)
+	points_grid = numpy.stack([grid_x.ravel(), grid_y.ravel()], axis=-1).astype(numpy.float64)
+	points_grid.setflags(write=False)
+	return points_grid
+
+
 def thin_plate_spline_warp(vision_frame : VisionFrame, source_points : Points, target_points : Points, size : Size) -> VisionFrame:
 	height, width = vision_frame.shape[:2]
 	target_height, target_width = size
@@ -210,11 +221,7 @@ def thin_plate_spline_warp(vision_frame : VisionFrame, source_points : Points, t
 	A = params[n:]
 	
 	# Create grid for remapping (normalized coords)
-	grid_x, grid_y = numpy.meshgrid(
-		numpy.linspace(0, 1, target_width), 
-		numpy.linspace(0, 1, target_height)
-	)
-	points_grid = numpy.stack([grid_x.ravel(), grid_y.ravel()], axis=-1).astype(numpy.float64)
+	points_grid = create_tps_grid(target_width, target_height)
 	
 	# Compute distances from grid points to target landmarks
 	# Process in chunks to save memory if needed, but for face crops (512x512) full batch is fine
