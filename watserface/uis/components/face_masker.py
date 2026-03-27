@@ -61,17 +61,20 @@ def render() -> None:
 		)
 	FACE_MASK_TYPES_CHECKBOX_GROUP = gradio.CheckboxGroup(
 		label = wording.get('uis.face_mask_types_checkbox_group'),
+		info = (wording.get('help.face_mask_types') or '').split(' (')[0],
 		choices = watserface.choices.face_mask_types,
 		value = state_manager.get_item('face_mask_types')
 	)
 	FACE_MASK_AREAS_CHECKBOX_GROUP = gradio.CheckboxGroup(
 		label = wording.get('uis.face_mask_areas_checkbox_group'),
+		info = (wording.get('help.face_mask_areas') or '').split(' (')[0],
 		choices = watserface.choices.face_mask_areas,
 		value = state_manager.get_item('face_mask_areas'),
 		visible = has_area_mask
 	)
 	FACE_MASK_REGIONS_CHECKBOX_GROUP = gradio.CheckboxGroup(
 		label = wording.get('uis.face_mask_regions_checkbox_group'),
+		info = (wording.get('help.face_mask_regions') or '').split(' (')[0],
 		choices = watserface.choices.face_mask_regions,
 		value = state_manager.get_item('face_mask_regions'),
 		visible = has_region_mask
