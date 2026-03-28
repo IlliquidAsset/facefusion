@@ -17,6 +17,7 @@ def create_faces(vision_frame : VisionFrame, bounding_boxes : List[BoundingBox],
 	faces = []
 	nms_threshold = get_nms_threshold(state_manager.get_item('face_detector_model'), state_manager.get_item('face_detector_angles'))
 	keep_indices = apply_nms(bounding_boxes, face_scores, state_manager.get_item('face_detector_score'), nms_threshold)
+	face_landmarker_score = state_manager.get_item('face_landmarker_score')
 
 	for index in keep_indices:
 		bounding_box = bounding_boxes[index]
@@ -29,9 +30,9 @@ def create_faces(vision_frame : VisionFrame, bounding_boxes : List[BoundingBox],
 		face_landmark_score_68 = 0.0
 		face_angle = estimate_face_angle(face_landmark_68_5)
 
-		if state_manager.get_item('face_landmarker_score') > 0:
+		if face_landmarker_score > 0:
 			face_landmark_68, face_landmark_478, face_landmark_score_68 = detect_face_landmark(vision_frame, bounding_box, face_angle)
-		if face_landmark_score_68 > state_manager.get_item('face_landmarker_score'):
+		if face_landmark_score_68 > face_landmarker_score:
 			if face_landmark_478 is not None:
 				face_landmark_5_68 = convert_to_face_landmark_5_from_478(face_landmark_478)
 			else:
@@ -111,7 +112,10 @@ def get_many_faces(vision_frames : List[VisionFrame], skip_cache : bool = False)
 				all_face_scores = []
 				all_face_landmarks_5 = []
 
-				for face_detector_angle in state_manager.get_item('face_detector_angles'):
+				face_detector_angles = state_manager.get_item('face_detector_angles')
+				face_detector_score = state_manager.get_item('face_detector_score')
+
+				for face_detector_angle in face_detector_angles:
 					if face_detector_angle == 0:
 						bounding_boxes, face_scores, face_landmarks_5 = detect_faces(vision_frame)
 					else:
@@ -120,7 +124,7 @@ def get_many_faces(vision_frames : List[VisionFrame], skip_cache : bool = False)
 					all_face_scores.extend(face_scores)
 					all_face_landmarks_5.extend(face_landmarks_5)
 
-				if all_bounding_boxes and all_face_scores and all_face_landmarks_5 and state_manager.get_item('face_detector_score') > 0:
+				if all_bounding_boxes and all_face_scores and all_face_landmarks_5 and face_detector_score > 0:
 					faces = create_faces(vision_frame, all_bounding_boxes, all_face_scores, all_face_landmarks_5)
 
 					if faces:
