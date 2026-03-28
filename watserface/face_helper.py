@@ -286,7 +286,7 @@ def calc_paste_area(temp_vision_frame : VisionFrame, crop_vision_frame : VisionF
 	return paste_bounding_box, paste_matrix
 
 
-@lru_cache(maxsize = None)
+@lru_cache(maxsize = 100)
 def create_static_anchors(feature_stride : int, anchor_total : int, stride_height : int, stride_width : int) -> Anchors:
 	y, x = numpy.mgrid[:stride_height, :stride_width][::-1]
 	anchors = numpy.stack((y, x), axis = -1)
