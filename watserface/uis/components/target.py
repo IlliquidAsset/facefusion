@@ -22,6 +22,7 @@ def render() -> None:
 	is_target_video = is_video(state_manager.get_item('target_path'))
 	TARGET_FILE = gradio.File(
 		label = wording.get('uis.target_file'),
+		info = wording.get('help.target_path'),
 		file_types =
 		[
 			'image',

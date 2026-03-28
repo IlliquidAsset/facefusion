@@ -20,6 +20,7 @@ def render() -> None:
 		state_manager.set_item('output_path', tempfile.gettempdir())
 	OUTPUT_PATH_TEXTBOX = gradio.Textbox(
 		label = wording.get('uis.output_path_textbox'),
+		info = wording.get('help.output_path'),
 		value = state_manager.get_item('output_path'),
 		max_lines = 1
 	)
