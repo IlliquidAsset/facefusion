@@ -240,18 +240,15 @@ def merge_video(target_path : str, temp_video_fps : Fps, output_video_resolution
 
 
 def concat_video(output_path : str, temp_output_paths : List[str]) -> bool:
-	concat_video_path = tempfile.mktemp()
-
-	with open(concat_video_path, 'w') as concat_video_file:
+	with tempfile.NamedTemporaryFile(mode='w', delete=False) as concat_video_file:
 		for temp_output_path in temp_output_paths:
 			concat_video_file.write('file \'' + os.path.abspath(temp_output_path) + '\'' + os.linesep)
-		concat_video_file.flush()
-		concat_video_file.close()
+		concat_video_path = concat_video_file.name
 
 	output_path = os.path.abspath(output_path)
 	commands = ffmpeg_builder.chain(
 		ffmpeg_builder.unsafe_concat(),
-		ffmpeg_builder.set_input(concat_video_file.name),
+		ffmpeg_builder.set_input(concat_video_path),
 		ffmpeg_builder.copy_video_encoder(),
 		ffmpeg_builder.copy_audio_encoder(),
 		ffmpeg_builder.force_output(output_path)
