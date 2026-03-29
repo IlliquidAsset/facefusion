@@ -32,15 +32,28 @@ class StudioOrchestrator:
                     set_dir = self.identity_builder.face_set_dir / fs_id
                     if set_dir.exists():
                         # Look for model files
-                        potential_models = (
-                            list(set_dir.glob("*_controlnet")) +
-                            list(set_dir.glob("*.pth")) +
-                            list(set_dir.glob("*.safetensors"))
-                        )
+                        controlnets = []
+                        pths = []
+                        safetensors = []
 
-                        for model_path in potential_models:
-                            if model_path.is_dir() or model_path.is_file():
-                                identity.model_path = str(model_path)
+                        try:
+                            with os.scandir(set_dir) as it:
+                                for entry in it:
+                                    name = entry.name
+                                    if name.endswith('_controlnet'):
+                                        controlnets.append(entry)
+                                    elif name.endswith('.pth'):
+                                        pths.append(entry)
+                                    elif name.endswith('.safetensors'):
+                                        safetensors.append(entry)
+                        except OSError:
+                            pass
+
+                        potential_models = controlnets + pths + safetensors
+
+                        for entry in potential_models:
+                            if entry.is_dir() or entry.is_file():
+                                identity.model_path = entry.path
                                 identity.epochs_trained = 100  # Assume trained
                                 break
 
