@@ -1,7 +1,3 @@
-## 2026-01-13 - Project Orientation
-**Learning:** This is a Python/Gradio face processing application with a modular UI system.
-**Action:** Focus on Gradio-specific accessibility improvements (aria-labels, loading states) and small UX wins in frequently used components.
-
-## 2026-01-13 - Tooltip Consistency
-**Learning:** Gradio's `Dropdown` component supports an `info` parameter for tooltips. `watserface/wording.py` often contains help text that isn't being displayed in the UI.
-**Action:** When identifying UI components, check `wording.py` for unused 'help' strings that can be added as `info` parameters.
+## 2025-05-15 - Training Options Accessibility
+**Learning:** Hardcoded labels in new features (like Training) often miss accessibility features like tooltips (`info` param in Gradio). Moving them to a central `wording.py` ensures consistency and easier localization/maintenance.
+**Action:** When adding new UI components, always add labels and help text to `wording.py` first, then reference them.

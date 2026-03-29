@@ -2,7 +2,7 @@ from typing import Optional
 
 import gradio
 
-from watserface import state_manager
+from watserface import state_manager, wording
 from watserface.uis.core import register_ui_component
 
 TRAINING_MODEL_DROPDOWN : Optional[gradio.Dropdown] = None
@@ -27,30 +27,35 @@ def render() -> None:
 		gradio.Markdown("### 🛠️ Training Configuration")
 		with gradio.Row():
 			TRAINING_MODEL_DROPDOWN = gradio.Dropdown(
-				label = 'Model Type',
+				label = wording.get('uis.training_model_dropdown'),
+				info = wording.get('help.training_model'),
 				choices = [ 'InstantID', 'SimSwap', 'XSeg (Occlusion)', 'Custom' ],
 				value = 'InstantID'
 			)
 			TRAINING_BASE_MODEL_DROPDOWN = gradio.Dropdown(
-				label = 'Base Model (Optional)',
+				label = wording.get('uis.training_base_model_dropdown'),
+				info = wording.get('help.training_base_model'),
 				choices = [ 'none' ], # To be populated with available models
 				value = 'none'
 			)
 		TRAINING_OUTPUT_MODEL_TEXTBOX = gradio.Textbox(
-			label = 'Output Model Name',
+			label = wording.get('uis.training_output_model_textbox'),
+			info = wording.get('help.training_output_model'),
 			value = 'my_custom_model',
 			placeholder = 'Enter name for the new model'
 		)
 		with gradio.Row():
 			TRAINING_EPOCHS_SLIDER = gradio.Slider(
-				label = 'Epochs',
+				label = wording.get('uis.training_epochs_slider'),
+				info = wording.get('help.training_epochs'),
 				minimum = 1,
 				maximum = 1000,
 				step = 1,
 				value = 100
 			)
 			TRAINING_BATCH_SIZE_SLIDER = gradio.Slider(
-				label = 'Batch Size',
+				label = wording.get('uis.training_batch_size_slider'),
+				info = wording.get('help.training_batch_size'),
 				minimum = 1,
 				maximum = 16,
 				step = 1,
@@ -58,12 +63,14 @@ def render() -> None:
 			)
 		with gradio.Row():
 			TRAINING_LEARNING_RATE_NUMBER = gradio.Number(
-				label = 'Learning Rate',
+				label = wording.get('uis.training_learning_rate_number'),
+				info = wording.get('help.training_learning_rate'),
 				value = 0.001,
 				step = 0.0001
 			)
 			TRAINING_SAVE_INTERVAL_SLIDER = gradio.Slider(
-				label = 'Save Interval (Epochs)',
+				label = wording.get('uis.training_save_interval_slider'),
+				info = wording.get('help.training_save_interval'),
 				minimum = 1,
 				maximum = 100,
 				step = 1,
