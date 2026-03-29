@@ -13,7 +13,7 @@ from watserface.types import Angle, BoundingBox, Detection, DownloadScope, Downl
 from watserface.vision import restrict_frame, unpack_resolution
 
 
-@lru_cache(maxsize = None)
+@lru_cache(maxsize = 100)
 def create_static_model_set(download_scope : DownloadScope) -> ModelSet:
 	return\
 	{

@@ -16,7 +16,7 @@ IMAGENET_MEAN = numpy.array([ 0.485, 0.456, 0.406 ], dtype = numpy.float32)
 IMAGENET_STD = numpy.array([ 0.229, 0.224, 0.225 ], dtype = numpy.float32)
 
 
-@lru_cache(maxsize = None)
+@lru_cache(maxsize = 100)
 def create_static_model_set(download_scope : DownloadScope) -> ModelSet:
 	return\
 	{
