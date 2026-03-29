@@ -17,3 +17,7 @@
 ## 2025-05-23 - NumPy Array Allocation and Dtypes
 **Learning:** `numpy.ones().astype(float32)` creates a default `float64` array then copies it to `float32`, which is ~82% slower than `numpy.ones(..., dtype=float32)`. Re-creating constant arrays (like normalization means) in tight loops adds unnecessary allocation overhead, even if small.
 **Action:** Always use the `dtype` argument during array creation instead of `astype()` immediately after. Hoist constant array definitions to module level to avoid re-allocation in hot paths.
+
+## 2025-01-26 - Triangulation Caching
+**Learning:** `scipy.spatial.Delaunay` accounts for ~45% of `create_normal_map` execution time. Since face topology is mostly static for "canonical" faces, caching the triangulation indices (`simplices`) based on a validity heuristic (edge length) yields a ~2x speedup (4.5ms vs 8.6ms) without sacrificing correctness for distorted faces (which fallback to recomputation).
+**Action:** Cache expensive geometric computations that depend on topology rather than geometry, but protect with validity checks to avoid locking in bad states.

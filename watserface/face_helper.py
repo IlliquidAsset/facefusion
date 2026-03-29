@@ -430,6 +430,9 @@ def merge_matrix(matrices : List[Matrix]) -> Matrix:
 	return merged_matrix[:2, :]
 
 
+_TRIANGULATION_CACHE = {}
+
+
 def create_normal_map(landmarks_478: FaceLandmark478, size: Size) -> VisionFrame:
 	"""
 	Generate a normal map from 3D landmarks.
@@ -447,14 +450,36 @@ def create_normal_map(landmarks_478: FaceLandmark478, size: Size) -> VisionFrame
 		return numpy.zeros((height, width, 3), dtype=numpy.uint8)
 
 	# 1. Triangulate based on 2D projection
-	try:
-		tri = scipy.spatial.Delaunay(landmarks_478[:, :2])
-	except Exception:
-		return numpy.zeros((height, width, 3), dtype=numpy.uint8)
+	simplices = _TRIANGULATION_CACHE.get('simplices')
+
+	if simplices is None:
+		try:
+			tri = scipy.spatial.Delaunay(landmarks_478[:, :2])
+			simplices = tri.simplices
+
+			# Cache strategy:
+			# Only cache if the face is relatively frontal to avoid locking in
+			# a distorted topology (e.g. from a side profile) for all future faces.
+			# Check: max edge length < 0.5 * face span
+			points = landmarks_478[:, :2]
+			face_span = numpy.max(numpy.max(points, axis=0) - numpy.min(points, axis=0))
+
+			tri_points = points[simplices]
+			# Compute max edge length in the triangulation
+			edge_lengths = numpy.max([
+				numpy.linalg.norm(tri_points[:, 0] - tri_points[:, 1], axis=1),
+				numpy.linalg.norm(tri_points[:, 1] - tri_points[:, 2], axis=1),
+				numpy.linalg.norm(tri_points[:, 2] - tri_points[:, 0], axis=1)
+			])
+
+			if edge_lengths < 0.5 * face_span:
+				_TRIANGULATION_CACHE['simplices'] = simplices
+		except Exception:
+			return numpy.zeros((height, width, 3), dtype=numpy.uint8)
 
 	# 2. Compute face normals
 	# Get vertices for each triangle
-	tris = landmarks_478[tri.simplices]
+	tris = landmarks_478[simplices]
 	# Vectors for two edges
 	v1 = tris[:, 1] - tris[:, 0]
 	v2 = tris[:, 2] - tris[:, 0]
@@ -478,7 +503,7 @@ def create_normal_map(landmarks_478: FaceLandmark478, size: Size) -> VisionFrame
 
 	# Fill triangles
 	# Note: cv2.fillPoly expects integer points
-	pts = landmarks_478[tri.simplices][:, :, :2].astype(numpy.int32)
+	pts = landmarks_478[simplices][:, :, :2].astype(numpy.int32)
 
 	# We process triangle by triangle or batch.
 	# Batch drawing with separate colors is tricky in pure cv2 without loop.
