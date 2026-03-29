@@ -17,3 +17,7 @@
 ## 2025-05-23 - NumPy Array Allocation and Dtypes
 **Learning:** `numpy.ones().astype(float32)` creates a default `float64` array then copies it to `float32`, which is ~82% slower than `numpy.ones(..., dtype=float32)`. Re-creating constant arrays (like normalization means) in tight loops adds unnecessary allocation overhead, even if small.
 **Action:** Always use the `dtype` argument during array creation instead of `astype()` immediately after. Hoist constant array definitions to module level to avoid re-allocation in hot paths.
+
+## 2025-05-24 - State Manager Hoisting
+**Learning:** `state_manager.get_item()` calls `detect_app_context()` which inspects the stack using `sys._getframe()`. This is computationally expensive and scales with call depth. Calling this inside hot loops (e.g., per-frame or per-face) creates a significant CPU bottleneck.
+**Action:** Hoist `get_item` calls out of loops. Refactor helper functions (like `create_faces`) to accept configuration values as arguments (dependency injection) instead of querying the global state internally.
