@@ -16,6 +16,7 @@ def render() -> None:
 
 	EXECUTION_PROVIDERS_CHECKBOX_GROUP = gradio.CheckboxGroup(
 		label = wording.get('uis.execution_providers_checkbox_group'),
+		info = wording.get('help.execution_providers'),
 		choices = get_available_execution_providers(),
 		value = state_manager.get_item('execution_providers')
 	)
