@@ -17,3 +17,7 @@
 ## 2025-05-23 - NumPy Array Allocation and Dtypes
 **Learning:** `numpy.ones().astype(float32)` creates a default `float64` array then copies it to `float32`, which is ~82% slower than `numpy.ones(..., dtype=float32)`. Re-creating constant arrays (like normalization means) in tight loops adds unnecessary allocation overhead, even if small.
 **Action:** Always use the `dtype` argument during array creation instead of `astype()` immediately after. Hoist constant array definitions to module level to avoid re-allocation in hot paths.
+
+## 2025-05-24 - Missing Optimization Recovery
+**Learning:** Sometimes documentation (AGENTS.md) describes optimizations that are missing from the codebase (likely lost in a revert or bad merge).
+**Action:** When seeing performance claims in documentation, verify they exist in code. If missing, implementing them is a low-hanging fruit for performance wins (~40% in this case).
