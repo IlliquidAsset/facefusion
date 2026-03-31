@@ -121,19 +121,22 @@ def pre_check() -> bool:
 	return conditional_download_hashes(model_hash_set) and conditional_download_sources(model_source_set)
 
 
-def detect_face_landmark(vision_frame : VisionFrame, bounding_box : BoundingBox, face_angle : Angle) -> Tuple[FaceLandmark68, Optional[FaceLandmark478], Score]:
+def detect_face_landmark(vision_frame : VisionFrame, bounding_box : BoundingBox, face_angle : Angle, face_landmarker_model : str = None) -> Tuple[FaceLandmark68, Optional[FaceLandmark478], Score]:
 	face_landmark_2dfan4 = None
 	face_landmark_peppa_wutz = None
 	face_landmark_score_2dfan4 = 0.0
 	face_landmark_score_peppa_wutz = 0.0
 
-	if state_manager.get_item('face_landmarker_model') == 'mediapipe':
+	if not face_landmarker_model:
+		face_landmarker_model = state_manager.get_item('face_landmarker_model')
+
+	if face_landmarker_model == 'mediapipe':
 		return detect_with_mediapipe(vision_frame, bounding_box, face_angle)
 
-	if state_manager.get_item('face_landmarker_model') in [ 'many', '2dfan4' ]:
+	if face_landmarker_model in [ 'many', '2dfan4' ]:
 		face_landmark_2dfan4, face_landmark_score_2dfan4 = detect_with_2dfan4(vision_frame, bounding_box, face_angle)
 
-	if state_manager.get_item('face_landmarker_model') in [ 'many', 'peppa_wutz' ]:
+	if face_landmarker_model in [ 'many', 'peppa_wutz' ]:
 		face_landmark_peppa_wutz, face_landmark_score_peppa_wutz = detect_with_peppa_wutz(vision_frame, bounding_box, face_angle)
 
 	if face_landmark_score_2dfan4 > face_landmark_score_peppa_wutz - 0.2:

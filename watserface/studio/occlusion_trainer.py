@@ -20,7 +20,6 @@ import numpy
 from watserface import logger
 from watserface.filesystem import is_video, resolve_relative_path
 from watserface.face_analyser import get_one_face
-from watserface.face_landmarker import detect_face_landmark
 from watserface.types import Face, FaceLandmark478, VisionFrame
 
 
