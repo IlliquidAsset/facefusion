@@ -430,6 +430,9 @@ def merge_matrix(matrices : List[Matrix]) -> Matrix:
 	return merged_matrix[:2, :]
 
 
+_TRIANGULATION_CACHE = {}
+
+
 def create_normal_map(landmarks_478: FaceLandmark478, size: Size) -> VisionFrame:
 	"""
 	Generate a normal map from 3D landmarks.
@@ -447,14 +450,37 @@ def create_normal_map(landmarks_478: FaceLandmark478, size: Size) -> VisionFrame
 		return numpy.zeros((height, width, 3), dtype=numpy.uint8)
 
 	# 1. Triangulate based on 2D projection
-	try:
-		tri = scipy.spatial.Delaunay(landmarks_478[:, :2])
-	except Exception:
-		return numpy.zeros((height, width, 3), dtype=numpy.uint8)
+	num_landmarks = len(landmarks_478)
+	simplices = _TRIANGULATION_CACHE.get(num_landmarks)
+
+	if simplices is None:
+		try:
+			tri = scipy.spatial.Delaunay(landmarks_478[:, :2])
+			simplices = tri.simplices
+
+			# Validate topology before caching
+			min_xy = numpy.min(landmarks_478[:, :2], axis = 0)
+			max_xy = numpy.max(landmarks_478[:, :2], axis = 0)
+			face_span = numpy.max(max_xy - min_xy)
+
+			p0 = landmarks_478[simplices[:, 0], :2]
+			p1 = landmarks_478[simplices[:, 1], :2]
+			p2 = landmarks_478[simplices[:, 2], :2]
+
+			d01 = numpy.linalg.norm(p0 - p1, axis = 1)
+			d12 = numpy.linalg.norm(p1 - p2, axis = 1)
+			d20 = numpy.linalg.norm(p2 - p0, axis = 1)
+
+			max_edge = max(numpy.max(d01), numpy.max(d12), numpy.max(d20))
+
+			if max_edge < 0.5 * face_span:
+				_TRIANGULATION_CACHE[num_landmarks] = simplices
+		except Exception:
+			return numpy.zeros((height, width, 3), dtype=numpy.uint8)
 
 	# 2. Compute face normals
 	# Get vertices for each triangle
-	tris = landmarks_478[tri.simplices]
+	tris = landmarks_478[simplices]
 	# Vectors for two edges
 	v1 = tris[:, 1] - tris[:, 0]
 	v2 = tris[:, 2] - tris[:, 0]
@@ -478,7 +504,7 @@ def create_normal_map(landmarks_478: FaceLandmark478, size: Size) -> VisionFrame
 
 	# Fill triangles
 	# Note: cv2.fillPoly expects integer points
-	pts = landmarks_478[tri.simplices][:, :, :2].astype(numpy.int32)
+	pts = landmarks_478[simplices][:, :, :2].astype(numpy.int32)
 
 	# We process triangle by triangle or batch.
 	# Batch drawing with separate colors is tricky in pure cv2 without loop.
