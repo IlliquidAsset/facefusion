@@ -9,6 +9,9 @@ from cv2.typing import Size
 
 from watserface.types import Anchors, Angle, BoundingBox, Distance, Face, FaceDetectorModel, FaceLandmark5, FaceLandmark68, FaceLandmark478, Mask, Matrix, Points, Scale, Score, Translation, VisionFrame, WarpTemplate, WarpTemplateSet
 
+_TRIANGULATION_CACHE = None
+
+
 WARP_TEMPLATE_SET : WarpTemplateSet =\
 {
 	'arcface_112_v1': numpy.array(
@@ -439,6 +442,8 @@ def create_normal_map(landmarks_478: FaceLandmark478, size: Size) -> VisionFrame
 	Returns:
 		Normal map image (RGB) where R=X, G=Y, B=Z (0-255).
 	"""
+	global _TRIANGULATION_CACHE
+
 	width, height = size
 
 	# Validate input
@@ -447,14 +452,30 @@ def create_normal_map(landmarks_478: FaceLandmark478, size: Size) -> VisionFrame
 		return numpy.zeros((height, width, 3), dtype=numpy.uint8)
 
 	# 1. Triangulate based on 2D projection
-	try:
-		tri = scipy.spatial.Delaunay(landmarks_478[:, :2])
-	except Exception:
-		return numpy.zeros((height, width, 3), dtype=numpy.uint8)
+	simplices = _TRIANGULATION_CACHE
+
+	if simplices is None:
+		try:
+			tri = scipy.spatial.Delaunay(landmarks_478[:, :2])
+			simplices = tri.simplices
+
+			# Cache valid topology (prevent caching side profiles with long edges)
+			points = landmarks_478[:, :2]
+			face_span = numpy.linalg.norm(points.max(axis = 0) - points.min(axis = 0))
+			tri_points = points[simplices]
+			edge_lengths_1 = numpy.linalg.norm(tri_points[:, 0] - tri_points[:, 1], axis = 1)
+			edge_lengths_2 = numpy.linalg.norm(tri_points[:, 1] - tri_points[:, 2], axis = 1)
+			edge_lengths_3 = numpy.linalg.norm(tri_points[:, 2] - tri_points[:, 0], axis = 1)
+			max_edge_length = max(edge_lengths_1.max(), edge_lengths_2.max(), edge_lengths_3.max())
+
+			if max_edge_length < 0.5 * face_span:
+				_TRIANGULATION_CACHE = simplices
+		except Exception:
+			return numpy.zeros((height, width, 3), dtype=numpy.uint8)
 
 	# 2. Compute face normals
 	# Get vertices for each triangle
-	tris = landmarks_478[tri.simplices]
+	tris = landmarks_478[simplices]
 	# Vectors for two edges
 	v1 = tris[:, 1] - tris[:, 0]
 	v2 = tris[:, 2] - tris[:, 0]
@@ -478,7 +499,7 @@ def create_normal_map(landmarks_478: FaceLandmark478, size: Size) -> VisionFrame
 
 	# Fill triangles
 	# Note: cv2.fillPoly expects integer points
-	pts = landmarks_478[tri.simplices][:, :, :2].astype(numpy.int32)
+	pts = landmarks_478[simplices][:, :, :2].astype(numpy.int32)
 
 	# We process triangle by triangle or batch.
 	# Batch drawing with separate colors is tricky in pure cv2 without loop.
